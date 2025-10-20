@@ -1,0 +1,56 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.addButton {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: #1e40af;
+}
+
+.listingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.noListings {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #6b7280;
+  background-color: #f9fafb;
+  border-radius: 12px;
+}
+
+.createLink {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.createLink:hover {
+  text-decoration: underline;
+}

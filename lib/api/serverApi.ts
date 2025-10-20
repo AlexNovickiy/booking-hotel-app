@@ -122,6 +122,12 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
   };
 }
 
+export async function fetchUserListings(): Promise<Hotel[]> {
+  console.log(`[SERVER FETCH] Fetching user listings for profile.`);
+  await new Promise(resolve => setTimeout(resolve, 50));
+  return mockHotels; // Return the mock hotels as user listings
+}
+
 export async function fetchUserData(): Promise<User> {
   console.log(`[SERVER FETCH] Fetching user data for profile.`);
   await new Promise(resolve => setTimeout(resolve, 50));
