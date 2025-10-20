@@ -1,8 +1,8 @@
 'use client';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { fetchHotels } from '@/lib/api/serverApi'; // використовуємо серверний fetch для клієнта
+import { fetchHotels } from '@/lib/api/clientApi'; // використовуємо серверний fetch для клієнта
 import HotelCard from '@/components/hotel/HotelCard';
-import css from '@/app/(public)/Home.module.css';
+import css from '@/app/Home.module.css';
 import { useState } from 'react';
 import { HotelsResponse } from '@/lib/types';
 
@@ -13,8 +13,8 @@ type HotelListClientProps = {
 };
 
 export default function HotelListClient({ initialData }: HotelListClientProps) {
-  const [search, setSearch] = useState(''); // Стан пошуку
-  const [guests, setGuests] = useState(2); // Стан кількості гостей
+  const [search] = useState(''); // Стан пошуку
+  const [guests] = useState(2); // Стан кількості гостей
 
   // Використовуємо useQuery, щоб отримати дані. Ключ [hotels, search] дозволяє кешувати
   const { data, isLoading, isError } = useQuery({
@@ -36,14 +36,18 @@ export default function HotelListClient({ initialData }: HotelListClientProps) {
   const hotels = data?.hotels || [];
 
   return (
-    <div className={css.hotelGrid}>
+    <ul className={css.hotelGrid}>
       {hotels.length > 0 ? (
-        hotels.map(hotel => <HotelCard key={hotel.id} hotel={hotel} />)
+        hotels.map(hotel => (
+          <li key={hotel.id}>
+            <HotelCard hotel={hotel} />
+          </li>
+        ))
       ) : (
         <p className={css.noResults}>
           Не знайдено жодного готелю за вашим запитом.
         </p>
       )}
-    </div>
+    </ul>
   );
 }

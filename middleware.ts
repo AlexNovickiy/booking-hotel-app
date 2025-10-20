@@ -1,76 +1,89 @@
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
-import { checkServerSession } from './lib/api/serverApi';
-import { parse } from 'cookie';
+// import { cookies } from 'next/headers';
+// import { NextRequest, NextResponse } from 'next/server';
+// import { checkServerSession } from './lib/api/serverApi';
+// import { parse } from 'cookie';
 
-const publicPaths = ['/sign-in', '/sign-up'];
-const privatePaths = ['/profile', '/notes'];
+// const publicPaths = ['/login', '/register'];
+// const privatePaths = ['/profile', '/host'];
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-  const refreshToken = cookieStore.get('refreshToken')?.value;
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-  const isPrivatePath = privatePaths.some(path => pathname.startsWith(path));
+// export async function middleware(req: NextRequest) {
+//   const { pathname } = req.nextUrl;
+//   const cookieStore = await cookies();
+//   const refreshToken = cookieStore.get('refreshToken')?.value;
+//   const accessToken = req
+//     ? req.headers.get('authorization')?.split(' ')[1]
+//     : null;
+//   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+//   const isPrivatePath = privatePaths.some(path => pathname.startsWith(path));
 
-  if (!accessToken) {
-    if (refreshToken) {
-      const data = await checkServerSession();
-      const setCookie = data?.headers['set-cookie'];
-      if (setCookie) {
-        const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-        for (const cookieStr of cookieArray) {
-          const parsed = parse(cookieStr);
-          const options = {
-            expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-            path: parsed.Path,
-            maxAge: Number(parsed['Max-Age']),
-          };
-          if (parsed.accessToken) {
-            cookieStore.set('accessToken', parsed.accessToken, options);
-          }
-          if (parsed.refreshToken) {
-            cookieStore.set('refreshToken', parsed.refreshToken, options);
-          }
-        }
+//   if (!accessToken) {
+//     if (refreshToken) {
+//       const response = await checkServerSession();
+//       const setCookie = response?.headers['set-cookie'];
+//       if (setCookie) {
+//         const cookiesArray = Array.isArray(setCookie) ? setCookie : [setCookie];
+//         for (const cookieString of cookiesArray) {
+//           const parsedCookie = parse(cookieString);
+//           const options = {
+//             httpOnly: true,
+//             expires: parsedCookie.Expires
+//               ? new Date(parsedCookie.Expires)
+//               : undefined,
+//           };
+//           if (parsedCookie['refreshToken']) {
+//             cookieStore.set(
+//               'refreshToken',
+//               parsedCookie['refreshToken'],
+//               options
+//             );
+//           }
+//           if (parsedCookie['sessionId']) {
+//             cookieStore.set('sessionId', parsedCookie['sessionId'], options);
+//           }
+//         }
 
-        if (isPublicPath) {
-          return NextResponse.redirect(new URL('/', req.url), {
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
-        }
+//         if (isPublicPath) {
+//           return NextResponse.redirect(new URL('/', req.url), {
+//             headers: {
+//               Authorization: response.headers.authorization,
+//               Cookie: cookieStore.toString(),
+//             },
+//           });
+//         }
 
-        if (isPrivatePath) {
-          return NextResponse.next({
-            headers: {
-              Cookie: cookieStore.toString(),
-            },
-          });
-        }
-      }
-    }
+//         if (isPrivatePath) {
+//           return NextResponse.next({
+//             headers: {
+//               Authorization: response.headers.authorization,
+//               Cookie: cookieStore.toString(),
+//             },
+//           });
+//         }
+//       }
+//     }
 
-    if (isPublicPath) {
-      return NextResponse.next();
-    }
+//     if (isPublicPath) {
+//       return NextResponse.next();
+//     }
 
-    if (isPrivatePath) {
-      return NextResponse.redirect(new URL('/sign-in', req.url));
-    }
-  }
+//     if (isPrivatePath) {
+//       return NextResponse.redirect(new URL('/login', req.url));
+//     }
+//   }
 
-  if (isPublicPath) {
-    return NextResponse.redirect(new URL('/', req.url));
-  }
+//   if (isPublicPath) {
+//     return NextResponse.redirect(new URL('/', req.url));
+//   }
 
-  if (isPrivatePath) {
-    return NextResponse.next();
-  }
-}
+//   if (isPrivatePath) {
+//     return NextResponse.next();
+//   }
+// }
 
-export const config = {
-  matcher: ['/profile/:path*', '/notes/:path*', '/sign-in', '/sign-up'],
-};
+// export const config = {
+//   matcher: ['/profile/:path*', '/host/:path*', '/login', '/register'],
+// };
+
+const middleware = () => {};
+
+export default middleware;

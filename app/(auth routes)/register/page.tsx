@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import css from './SignUpPage.module.css';
+import css from './Register.module.css';
 import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api/clientApi';
@@ -12,9 +12,8 @@ export default function SignUpPage() {
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const newUser = Object.fromEntries(formData) as NewUser;
-      const user = await registerUser(newUser);
-      setUser(user);
+      const newUser = Object.fromEntries(Object.entries(formData)) as NewUser;
+      await registerUser(newUser);
       router.push('/login');
     } catch (error) {
       setIsError(
@@ -29,6 +28,17 @@ export default function SignUpPage() {
     <div className={css.mainContent}>
       <h1 className={css.formTitle}>Sign up</h1>
       <form action={handleSubmit} className={css.form}>
+        <div className={css.formGroup}>
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            className={css.input}
+            required
+          />
+        </div>
+
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input

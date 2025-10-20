@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserData } from '@/lib/api/serverApi';
+import { getMe } from '@/lib/api/clientApi';
 import Sidebar from '@/components/ProfileSidebar/ProfileSidebar';
 import MyListings from '@/components/MyListings/MyListings';
-import css from './Profile.module.css';
+import css from './ProfileClient.module.css';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
@@ -25,7 +25,7 @@ export default function ProfileClient() {
     isError,
   } = useQuery({
     queryKey: ['user'],
-    queryFn: fetchUserData,
+    queryFn: getMe,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 

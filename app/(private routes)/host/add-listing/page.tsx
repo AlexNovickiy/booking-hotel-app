@@ -65,16 +65,14 @@ export default function AddListingPage() {
 
     // Тут ми імітуємо, що файл imageFile буде завантажено,
     // а потім URL зображення буде відправлено на бекенд разом з іншими даними.
-    const listingData = {
-      title,
-      location,
-      description,
-      price,
-      // Тут буде imageURL замість imageFile, але використовуємо ім'я файлу як placeholder
-      imageUrlPlaceholder: `image/${imageFile.name}`,
-    };
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('location', location);
+    formData.append('description', description);
+    formData.append('price', String(price));
+    formData.append('image', imageFile);
 
-    createMutation.mutate(listingData);
+    createMutation.mutate(formData);
   };
 
   const handleGenerate = () => {

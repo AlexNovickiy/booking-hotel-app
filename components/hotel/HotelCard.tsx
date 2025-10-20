@@ -5,16 +5,15 @@ import Icon from '../ui/Icon';
 import Link from 'next/link';
 
 type HotelCardProps = {
-  key: string;
   hotel: Hotel;
 };
 
-export default function HotelCard({ key, hotel }: HotelCardProps) {
+export default function HotelCard({ hotel }: HotelCardProps) {
   const detailUrl = `/${hotel.id}`;
   const rating = hotel.ratings_summary.average_rating.toFixed(1);
 
   return (
-    <div key={key} className={css.card}>
+    <div className={css.card}>
       <Image
         src={hotel.imageUrl}
         alt={hotel.title}

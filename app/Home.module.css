@@ -1,7 +1,7 @@
 .homeContainer {
-  max-width: 1200px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 30px 15px;
+  padding: 15px 0;
 }
 
 .heroTitle {
@@ -26,8 +26,7 @@
 }
 
 .searchGroup {
-  flex-grow: 1;
-  min-width: 150px;
+  width: 100%;
 }
 
 .searchBar label {
@@ -61,6 +60,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: none;
 }
 
 .searchButton:hover {

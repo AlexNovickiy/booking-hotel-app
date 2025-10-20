@@ -1,11 +1,11 @@
 'use client';
 
-import { fetchHotelDetails } from '@/lib/api/serverApi';
+import { fetchHotelDetails } from '@/lib/api/clientApi';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
-import css from './DetailPage.module.css';
+import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
 
 type DetailPageClientProps = {

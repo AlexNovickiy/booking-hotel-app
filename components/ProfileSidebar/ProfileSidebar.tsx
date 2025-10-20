@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import css from './Sidebar.module.css';
+import css from './ProfileSidebar.module.css';
 import type { User } from '@/lib/types';
 
 type ProfileSection =

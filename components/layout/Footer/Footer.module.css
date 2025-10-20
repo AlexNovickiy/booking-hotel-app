@@ -1,1 +1,21 @@
-/* components/Footer.module.css */
+.footer {
+  background-image: linear-gradient(
+    to bottom,
+    rgb(31, 41, 55),
+    rgb(22, 55, 100)
+  );
+  color: #d1d5db; /* text-gray-400 */
+  padding: 18px 0;
+  margin-top: auto; /* Push to bottom */
+}
+
+.footerContent {
+  max-width: 1440px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 0.875rem; /* text-sm */
+}
+
+.footerContent p {
+  margin: 0.25rem 0;
+}

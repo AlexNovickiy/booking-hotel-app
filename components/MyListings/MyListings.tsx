@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserListings } from '@/lib/api/serverApi';
+import { fetchUserListings } from '@/lib/api/clientApi';
 import HotelCard from '@/components/hotel/HotelCard';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';

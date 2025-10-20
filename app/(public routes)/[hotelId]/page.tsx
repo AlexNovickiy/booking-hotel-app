@@ -3,7 +3,8 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
-import { prefetchHotelDetails, fetchHotelDetails } from '@/lib/api/serverApi';
+import { prefetchHotelDetails } from '@/lib/api/serverApi';
+import { fetchHotelDetails } from '@/lib/api/clientApi';
 import DetailPageClient from '@/components/hotel/DetailPage.client'; // Необхідний компонент для інтерактивності
 import { Metadata } from 'next';
 

@@ -4,6 +4,14 @@ import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import TanStackProvider from '@/components/providers/TanStackProvider/TanStackProvider';
 import AuthProvider from '@/components/providers/AuthProvider/AuthProvider';
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  variable: '--font-roboto',
+  subsets: ['latin'],
+  weight: ['100', '300', '400', '500', '700', '900'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'HotelBooking - Бронювання Готелів',
@@ -28,7 +36,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uk">
-      <body>
+      <body className={`${roboto.variable}`}>
         <TanStackProvider>
           {/* AuthProvider для Zustang/перевірки сесії */}
           <AuthProvider>
