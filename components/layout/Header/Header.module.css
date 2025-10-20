@@ -1,0 +1,105 @@
+.header {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+.navigation {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.navLinkActive {
+  background-color: #1e40af; /* темніший синій для активного */
+}
+
+.navLink:hover {
+  background-color: #3b82f6;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+.navButtonProfile {
+  background-color: #f59e0b; /* amber-500 */
+  color: white;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.navButtonProfile:hover {
+  background-color: #d97706;
+}
+
+.navButtonLogin,
+.navButtonRegister {
+  background-color: #ffffff;
+  color: #1f2937;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.navButtonLogout {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.navButtonLogout:hover {
+  background-color: #dc2626;
+}

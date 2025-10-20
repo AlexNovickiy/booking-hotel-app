@@ -1,25 +1,99 @@
-.main {
-  flex: 1;
+.homeContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 15px;
 }
 
-.container {
-  width: 90%;
-  max-width: 1280px;
-  margin: 0px auto;
-  padding: 0 16px 16px;
-}
-
-.title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 60px;
+.heroTitle {
+  font-size: 30px;
+  font-weight: 800;
   text-align: center;
+  margin-bottom: 30px;
+  color: #1f2937;
 }
 
-.description {
+.searchBar {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  border: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.searchGroup {
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.searchBar label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.searchBar input[type='text'],
+.searchBar input[type='date'],
+.searchBar input[type='number'] {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.searchButton {
+  background-color: #2563eb;
+  color: #ffffff;
+  height: 40px;
+  width: 100%;
+  padding: 0 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.searchButton:hover {
+  background-color: #1e40af;
+}
+
+.hotelGridWrapper {
+  padding-top: 15px;
+}
+
+.hotelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.loadingText,
+.errorText,
+.noResults {
+  text-align: center;
   font-size: 18px;
-  color: #444444;
-  line-height: 28px;
-  margin-bottom: 16px;
+  color: #4b5563;
+  padding: 40px 0;
+  grid-column: 1 / -1; /* Займе всю ширину сітки */
+}
+
+/* Media Queries for Search Bar Layout */
+@media (min-width: 600px) {
+  .searchBar {
+    flex-wrap: nowrap;
+  }
+  .searchButton {
+    width: 150px; /* Фіксована ширина кнопки на десктопі */
+    margin-top: 0;
+  }
 }

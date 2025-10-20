@@ -1,20 +1,36 @@
-import styles from './Home.module.css';
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query';
+import { fetchHotels } from '@/lib/api/serverApi';
+import HotelListClient from '@/components/hotel/HotelList.client';
+import SearchBarClient from '@/components/hotel/SearchBar.client';
+import css from './Home.module.css';
 
-export default function Home() {
+// Server Component
+export default async function HomePage() {
+  const queryClient = new QueryClient();
+  const initialData = await fetchHotels('', 2);
+  queryClient.prefetchQuery({
+    queryKey: ['hotels', '', 2],
+    queryFn: () => initialData,
+  });
+
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Welcome to NoteHub</h1>
-      <p className={styles.description}>
-        NoteHub is a simple and efficient application designed for managing
-        personal notes. It helps keep your thoughts organized and accessible in
-        one place, whether you are at home or on the go.
-      </p>
-      <p className={styles.description}>
-        The app provides a clean interface for writing, editing, and browsing
-        notes. With support for keyword search and structured organization,
-        NoteHub offers a streamlined experience for anyone who values clarity
-        and productivity.
-      </p>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className={css.homeContainer}>
+        <h1 className={css.heroTitle}>
+          Знайдіть ідеальне житло для вашої подорожі
+        </h1>
+
+        {/* Клієнтські компоненти для інтерактивності */}
+        <SearchBarClient />
+
+        <div className={css.hotelGridWrapper}>
+          <HotelListClient initialData={initialData} />
+        </div>
+      </div>
+    </HydrationBoundary>
   );
 }

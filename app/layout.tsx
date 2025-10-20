@@ -1,35 +1,23 @@
-import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google';
+import { Metadata } from 'next';
 import './globals.css';
-import 'modern-normalize';
-import Header from '@/components/Header/Header';
-import Footer from '@/components/Footer/Footer';
-import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import css from '@/app/Home.module.css';
-import { Toaster } from 'react-hot-toast';
-import AuthProvider from '@/components/AuthProvider/AuthProvider';
-
-const roboto = Roboto({
-  variable: '--font-roboto',
-  subsets: ['latin'],
-  weight: ['100', '300', '400', '500', '700', '900'],
-  display: 'swap',
-});
+import Header from '@/components/layout/Header/Header';
+import Footer from '@/components/layout/Footer/Footer';
+import TanStackProvider from '@/components/providers/TanStackProvider/TanStackProvider';
+import AuthProvider from '@/components/providers/AuthProvider/AuthProvider';
 
 export const metadata: Metadata = {
-  title: 'NoteHub',
-  description: 'A platform for note-taking and organization',
+  title: 'HotelBooking - Бронювання Готелів',
+  description: 'Онлайн-сервіс для бронювання житла та здачі в оренду житла.',
   openGraph: {
-    title: 'NoteHub',
-    description: 'A platform for note-taking and organization',
-    url: 'https://08-zustand-eight-virid.vercel.app',
+    title: 'HotelBooking - Бронювання Готелів',
+    description: 'Онлайн-сервіс для бронювання житла та здачі в оренду житла.',
+    url: 'http://localhost:3000',
     images: [
       {
-        url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        url: 'http://localhost:3000/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'NoteHub - A platform for note-taking and organization',
+        alt: 'HotelBooking - Бронювання Готелів',
       },
     ],
   },
@@ -37,22 +25,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
-}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${roboto.variable}`}>
-        <Toaster position="top-right" />
+    <html lang="uk">
+      <body>
         <TanStackProvider>
+          {/* AuthProvider для Zustang/перевірки сесії */}
           <AuthProvider>
             <Header />
-            <main className={css.main}>
-              {children}
-              {modal}
-            </main>
+            <main className="mainContent">{children}</main>
             <Footer />
           </AuthProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
         </TanStackProvider>
       </body>
     </html>

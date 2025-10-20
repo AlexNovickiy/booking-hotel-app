@@ -1,0 +1,45 @@
+/*
+ * Стилі для компонента Sidebar в профілі користувача
+ */
+
+.sidebar {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  border: 1px solid #f3f4f6;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.navLink {
+  display: block;
+  padding: 12px;
+  border-radius: 8px;
+  color: #4b5563;
+  font-weight: 600;
+  transition: background-color 0.15s;
+  text-align: left;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  background-color: #f3f4f6;
+}
+
+.navLinkActive {
+  background-color: #eff6ff; /* bg-blue-50 */
+  color: #1d4ed8; /* text-blue-700 */
+  font-weight: 700;
+  border-left: 4px solid #2563eb;
+}

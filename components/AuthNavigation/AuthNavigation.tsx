@@ -4,7 +4,7 @@ import Link from 'next/link';
 import css from './AuthNavigation.module.css';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/api/clientApi';
+import { logoutUser } from '@/lib/api/clientApi';
 
 export default function AuthNavigation() {
   const router = useRouter();
@@ -15,9 +15,9 @@ export default function AuthNavigation() {
   );
 
   const handleLogout = async () => {
-    await logout();
+    await logoutUser();
     clearIsAuthenticated();
-    router.push('/sign-in');
+    router.push('/login');
   };
   return (
     <>
