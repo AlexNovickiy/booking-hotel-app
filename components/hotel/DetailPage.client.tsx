@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
+import BookingForm from './BookingForm';
+import { BookingFormData } from '@/lib/types';
 import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
 
@@ -13,6 +16,8 @@ type DetailPageClientProps = {
 };
 
 export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const {
     data: hotel,
     isLoading,
@@ -21,6 +26,15 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     queryKey: ['hotelDetails', hotelId],
     queryFn: () => fetchHotelDetails(hotelId),
   });
+
+  const handleBookingSubmit = (bookingData: BookingFormData) => {
+    // Here you would typically send the booking data to your API
+    console.log('Booking submitted:', bookingData);
+    // You can add API call here later
+    alert(
+      "Бронювання успішно відправлено! Ми зв'яжемося з вами найближчим часом."
+    );
+  };
 
   if (isLoading) return <Loader />;
   if (isError || !hotel) return <ErrorMessage />;
@@ -65,7 +79,12 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
             </span>
             / ніч
           </div>
-          <button className={css.bookButton}>Забронювати</button>
+          <button
+            className={css.bookButton}
+            onClick={() => setIsBookingModalOpen(true)}
+          >
+            Забронювати
+          </button>
         </div>
       </div>
 
@@ -94,6 +113,14 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
           <p>Відгуків ще немає.</p>
         )}
       </div>
+
+      <BookingForm
+        hotelTitle={hotel.title}
+        price={hotel.price}
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        onSubmit={handleBookingSubmit}
+      />
     </div>
   );
 }

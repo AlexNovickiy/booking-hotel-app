@@ -59,3 +59,13 @@ export interface HotelsResponse {
   totalPages: number;
   currentPage: number;
 }
+
+export type BookingFormData = {
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  name: string;
+  email: string;
+  phone: string;
+  specialRequests?: string;
+};

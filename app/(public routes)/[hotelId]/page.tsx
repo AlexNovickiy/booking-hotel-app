@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { prefetchHotelDetails } from '@/lib/api/serverApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
-import DetailPageClient from '@/components/hotel/DetailPage.client'; // Необхідний компонент для інтерактивності
+import DetailPageClient from '@/components/hotel/DetailPage.client';
 import { Metadata } from 'next';
 
 type DetailPageProps = {
