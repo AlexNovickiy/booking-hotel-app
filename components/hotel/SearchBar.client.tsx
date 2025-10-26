@@ -12,14 +12,16 @@ export default function SearchBarClient() {
 
   const [query, setQuery] = useState('');
   const [guests, setGuests] = useState(2);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
     setGuests(Number(searchParams.get('guests')) || 2);
+    setCurrentPage(Number(searchParams.get('page')) || 1);
   }, [searchParams]);
 
   const handleSearch = useDebouncedCallback(
-    (term: string, numGuests: number) => {
+    (term: string, numGuests: number, currentPage: number) => {
       const params = new URLSearchParams(searchParams.toString());
       if (term) {
         params.set('q', term);
@@ -31,6 +33,7 @@ export default function SearchBarClient() {
       } else {
         params.delete('guests');
       }
+      params.set('page', String(currentPage));
       router.replace(`/?${params.toString()}`);
     },
     300
@@ -38,7 +41,7 @@ export default function SearchBarClient() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    handleSearch(query, guests);
+    handleSearch(query, guests, currentPage);
   };
 
   return (
@@ -52,7 +55,7 @@ export default function SearchBarClient() {
           value={query}
           onChange={e => {
             setQuery(e.target.value);
-            handleSearch(e.target.value, guests);
+            handleSearch(e.target.value, guests, currentPage);
           }}
         />
       </div>
@@ -66,7 +69,7 @@ export default function SearchBarClient() {
           onChange={e => {
             const numGuests = Number(e.target.value);
             setGuests(numGuests);
-            handleSearch(query, numGuests);
+            handleSearch(query, numGuests, currentPage);
           }}
         />
       </div>

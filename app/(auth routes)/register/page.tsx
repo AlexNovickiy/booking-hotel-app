@@ -4,11 +4,9 @@ import css from './Register.module.css';
 import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api/clientApi';
-import { useAuthStore } from '@/lib/store/authStore';
 export default function SignUpPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
-  const setUser = useAuthStore(state => state.setUser);
 
   const handleSubmit = async (formData: FormData) => {
     try {

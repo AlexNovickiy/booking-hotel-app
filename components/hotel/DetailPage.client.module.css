@@ -134,6 +134,139 @@
   color: #111827;
 }
 
+.reviewsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.reviewsActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.addReviewButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addReviewButton:hover {
+  background-color: #059669;
+}
+
+.addIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.analyzeButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.analyzeButton:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.analyzeButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.analyzeIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.loadingIcon {
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.analysisSection {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.analysisSection h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0c4a6e;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.analysisContent {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.analysisLine {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.analysisLine:first-child {
+  margin-top: 0;
+}
+
+.analysisLine:last-child {
+  margin-bottom: 0;
+}
+
+.errorMessage {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
 .reviewCard {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
@@ -171,4 +304,35 @@
   color: #374151;
   line-height: 1.6;
   margin: 0;
+}
+
+/* Responsive styles for analysis section */
+@media (max-width: 640px) {
+  .reviewsHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reviewsHeader h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .reviewsActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .addReviewButton,
+  .analyzeButton {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .analysisSection {
+    padding: 1rem;
+  }
+
+  .analysisSection h3 {
+    font-size: 1.125rem;
+  }
 }

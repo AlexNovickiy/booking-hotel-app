@@ -69,3 +69,9 @@ export type BookingFormData = {
   phone: string;
   specialRequests?: string;
 };
+
+export type SessionResponse = {
+  data: {
+    accessToken: string;
+  };
+};

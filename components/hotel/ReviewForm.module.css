@@ -1,0 +1,263 @@
+.reviewForm {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.closeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.closeIcon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  transform: rotate(45deg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ratingSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.textSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.starsContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.starButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.starButton:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  transform: scale(1.1);
+}
+
+.starButton:disabled {
+  cursor: not-allowed;
+}
+
+.starIcon {
+  width: 24px;
+  height: 24px;
+  transition: color 0.2s;
+}
+
+.starActive .starIcon {
+  color: #f59e0b;
+}
+
+.starInactive .starIcon {
+  color: #d1d5db;
+}
+
+.ratingText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  background-color: white;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.textarea:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+}
+
+.textarea.error {
+  border-color: #ef4444;
+}
+
+.charCount {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+.errorText {
+  display: block;
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancelButton {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.cancelButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.submitButton {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #d97706;
+}
+
+.submitButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.loadingIcon {
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .reviewForm {
+    padding: 1rem;
+  }
+
+  .header h3 {
+    font-size: 1.125rem;
+  }
+
+  .starsContainer {
+    justify-content: center;
+  }
+
+  .starIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

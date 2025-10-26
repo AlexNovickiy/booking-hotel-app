@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { analyzeReviewsWithGemini, postReview } from '@/lib/api/clientApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import BookingForm from './BookingForm';
+import ReviewForm from './ReviewForm';
 import { BookingFormData } from '@/lib/types';
 import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
@@ -17,6 +19,8 @@ type DetailPageClientProps = {
 
 export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const {
     data: hotel,
@@ -25,6 +29,36 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
   } = useQuery({
     queryKey: ['hotelDetails', hotelId],
     queryFn: () => fetchHotelDetails(hotelId),
+    refetchOnMount: false,
+  });
+
+  const {
+    mutate: analyzeReviews,
+    data: analysisResult,
+    isPending: isAnalyzing,
+    error: analysisError,
+  } = useMutation({
+    mutationFn: () => {
+      if (!hotel?.reviews) throw new Error('No reviews available');
+      const reviewTexts = hotel.reviews.map(review => review.text);
+      return analyzeReviewsWithGemini(reviewTexts);
+    },
+  });
+
+  const {
+    mutate: submitReview,
+    isPending: isSubmittingReview,
+    error: reviewError,
+  } = useMutation({
+    mutationFn: (reviewData: { text: string; rating: number }) => {
+      return postReview(parseInt(hotelId), reviewData);
+    },
+    onSuccess: () => {
+      setShowReviewForm(false);
+      // Invalidate and refetch hotel details to show new review
+      // This would typically be handled by the query invalidation
+      alert('Відгук успішно додано!');
+    },
   });
 
   const handleBookingSubmit = (bookingData: BookingFormData) => {
@@ -34,6 +68,19 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     alert(
       "Бронювання успішно відправлено! Ми зв'яжемося з вами найближчим часом."
     );
+  };
+
+  const handleAnalyzeReviews = () => {
+    analyzeReviews();
+    setShowAnalysis(true);
+  };
+
+  const handleReviewSubmit = (reviewData: { text: string; rating: number }) => {
+    submitReview(reviewData);
+  };
+
+  const handleReviewCancel = () => {
+    setShowReviewForm(false);
   };
 
   if (isLoading) return <Loader />;
@@ -89,7 +136,72 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
       </div>
 
       <div className={css.reviewsSection}>
-        <h2>Відгуки</h2>
+        <div className={css.reviewsHeader}>
+          <h2>Відгуки</h2>
+          <div className={css.reviewsActions}>
+            <button
+              className={css.addReviewButton}
+              onClick={() => setShowReviewForm(true)}
+            >
+              <Icon name="plus" className={css.addIcon} />
+              Залишити відгук
+            </button>
+            {hotel.reviews.length > 0 && (
+              <button
+                className={css.analyzeButton}
+                onClick={handleAnalyzeReviews}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Icon name="star" className={css.loadingIcon} />
+                    Аналізуємо...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="star" className={css.analyzeIcon} />
+                    Проаналізувати відгуки
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {showAnalysis && analysisResult && (
+          <div className={css.analysisSection}>
+            <h3>🤖 Аналіз відгуків</h3>
+            <div className={css.analysisContent}>
+              {analysisResult.split('\n').map((line, index) => (
+                <p key={index} className={css.analysisLine}>
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {analysisError && (
+          <div className={css.errorMessage}>
+            Помилка при аналізі відгуків: {analysisError.message}
+          </div>
+        )}
+
+        {reviewError && (
+          <div className={css.errorMessage}>
+            Помилка при додаванні відгуку: {reviewError.message}
+          </div>
+        )}
+
+        {showReviewForm && (
+          <ReviewForm
+            hotelId={hotelId}
+            onSubmit={handleReviewSubmit}
+            onCancel={handleReviewCancel}
+            isSubmitting={isSubmittingReview}
+          />
+        )}
+
         {hotel.reviews.length > 0 ? (
           hotel.reviews.map(review => (
             <div key={review.user.id} className={css.reviewCard}>

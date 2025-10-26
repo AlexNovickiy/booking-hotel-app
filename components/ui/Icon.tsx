@@ -50,10 +50,7 @@ const Icon = ({ name, className = 'w-5 h-5' }: IconProps) => {
       );
     case 'plus':
       svgPath = (
-        <path
-          fill="currentColor"
-          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
-        />
+        <path fill="currentColor" d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z" />
       );
       break;
     default:

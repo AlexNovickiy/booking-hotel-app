@@ -3,7 +3,7 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
-import { fetchHotels } from '@/lib/api/clientApi';
+import { fetchHotels } from '@/lib/api/serverApi';
 import HotelListClient from '@/components/hotel/HotelList.client';
 import SearchBarClient from '@/components/hotel/SearchBar.client';
 import css from '@/app/Home.module.css';

@@ -1,16 +1,17 @@
+'use client';
+
 import {
   CheckSession,
   Hotel,
   HotelDetails,
   HotelsResponse,
   LoginCredentials,
-  NewListing,
   NewUser,
-  User,
+  SessionResponse,
 } from '@/lib/types';
-import { nextServer } from './api';
+import { nextClient } from './api';
 import axios from 'axios';
-// В реальному проекті тут будуть імпорти axios
+import { useAuthStore } from '@/lib/store/authStore';
 
 const GEMINI_API_URL =
   process.env.NEXT_PUBLIC_GEMINI_API_URL +
@@ -18,6 +19,12 @@ const GEMINI_API_URL =
     process.env.NEXT_PUBLIC_API_KEY_GEMINI || '';
 
 console.log(GEMINI_API_URL);
+
+// Функція для отримання заголовків авторизації
+export const getAuthHeaders = () => {
+  const { token } = useAuthStore.getState();
+  return token ? { Authorization: `Bearer ${token}` } : null;
+};
 
 type GeminiPayload = {
   contents: { parts: { text: string }[] }[];
@@ -108,7 +115,8 @@ const mockHotels: Hotel[] = [
 
 export async function fetchHotels(
   query: string = '',
-  guests: number = 2
+  guests: number = 2,
+  page: number = 1
 ): Promise<HotelsResponse> {
   console.log(`[SERVER FETCH] Fetching hotels for query: ${query}`);
   await new Promise(resolve => setTimeout(resolve, 50));
@@ -119,7 +127,7 @@ export async function fetchHotels(
       h.location.toLowerCase().includes(query.toLowerCase())
   );
 
-  return { hotels: filteredHotels, totalPages: 1, currentPage: 1 };
+  return { hotels: filteredHotels, totalPages: 2, currentPage: page };
 }
 
 export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
@@ -187,14 +195,19 @@ export async function fetchUserListings(): Promise<Hotel[]> {
 }
 
 // --- AUTH MOCK ---
-export async function loginUser(credentials: LoginCredentials): Promise<User> {
+export async function loginUser(
+  credentials: LoginCredentials
+): Promise<SessionResponse> {
   await new Promise(resolve => setTimeout(resolve, 300));
-  return {
-    id: 'user-123',
-    email: credentials.email,
-    name: 'Олександр',
-    photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
+
+  // В реальному проекті тут буде запит до API
+  const mockResponse = {
+    data: {
+      accessToken: 'mock-jwt-token-1234567890',
+    },
   };
+
+  return mockResponse;
 }
 export async function logoutUser(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 300));
@@ -206,9 +219,20 @@ export async function postReview(
   reviewData: { text: string; rating: number }
 ) {
   console.log(`[CLIENT API] Posting review for ${hotelId}:`, reviewData);
-  // Тут в реальності має бути запит, який додає відгук до MongoDB
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return { success: true };
+
+  // В реальному проекті тут буде запит з авторизацією
+
+  try {
+    // const response = await authAxios.post(`/hotels/${hotelId}/reviews`, reviewData);
+    // return response.data;
+
+    // Mock response
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return { success: true };
+  } catch (error) {
+    console.error('Error posting review:', error);
+    throw error;
+  }
 }
 
 export async function createNewListing(formData: FormData) {
@@ -234,7 +258,7 @@ export async function analyzeReviewsWithGemini(
 }
 
 export async function checkSession() {
-  const response = await nextServer.get<CheckSession>('/auth/session');
+  const response = await nextClient.get<CheckSession>('/auth/session');
   return response.data.success;
 }
 
@@ -246,13 +270,13 @@ const mockUser = {
 };
 
 export async function getMe() {
-  // const response = await nextServer.get<User>('/users/me');
+  // const response = await nextClient.get<User>('/users/me');
   // return response.data;
   return mockUser;
 }
 
 export async function registerUser(userData: NewUser) {
-  // const response = await nextServer.post<User>('/auth/register', userData);
+  // const response = await nextClient.post<User>('/auth/register', userData);
   // return response.data;
   return mockUser;
 }

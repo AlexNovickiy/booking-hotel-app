@@ -7,13 +7,13 @@ import Icon from '@/components/ui/Icon';
 import { logoutUser } from '@/lib/api/clientApi';
 
 export default function Header() {
-  const { isAuthenticated, user, clearIsAuthenticated } = useAuthStore();
+  const { isAuthenticated, user, clearAuth } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
     await logoutUser();
-    clearIsAuthenticated();
+    clearAuth();
     router.push('/');
   };
 

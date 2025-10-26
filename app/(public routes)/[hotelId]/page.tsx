@@ -4,7 +4,7 @@ import {
   dehydrate,
 } from '@tanstack/react-query';
 import { prefetchHotelDetails } from '@/lib/api/serverApi';
-import { fetchHotelDetails } from '@/lib/api/clientApi';
+import { fetchHotelDetails } from '@/lib/api/serverApi';
 import DetailPageClient from '@/components/hotel/DetailPage.client';
 import { Metadata } from 'next';
 

@@ -5,6 +5,8 @@ import HotelCard from '@/components/hotel/HotelCard';
 import css from '@/app/Home.module.css';
 import { useState } from 'react';
 import { HotelsResponse } from '@/lib/types';
+import Pagination from '@/components/Pagination/Pagination';
+import { useSearchParams } from 'next/navigation';
 
 // Це клієнтський компонент, який використовує TanStack Query.
 // Початкові дані (initialData) будуть взяті з префетчу на сервері.
@@ -13,15 +15,19 @@ type HotelListClientProps = {
 };
 
 export default function HotelListClient({ initialData }: HotelListClientProps) {
-  const [search] = useState(''); // Стан пошуку
-  const [guests] = useState(2); // Стан кількості гостей
+  const searchParams = useSearchParams();
+  const search = searchParams.get('q') || '';
+  const guests = Number(searchParams.get('guests')) || 2;
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get('page')) || 1
+  );
 
-  // Використовуємо useQuery, щоб отримати дані. Ключ [hotels, search] дозволяє кешувати
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['hotels', search, guests],
-    queryFn: () => fetchHotels(search, guests),
+    queryKey: ['hotels', search, guests, currentPage],
+    queryFn: () => fetchHotels(search, guests, currentPage),
     placeholderData: keepPreviousData,
     initialData,
+    refetchOnMount: false,
   });
 
   if (isLoading)
@@ -36,18 +42,27 @@ export default function HotelListClient({ initialData }: HotelListClientProps) {
   const hotels = data?.hotels || [];
 
   return (
-    <ul className={css.hotelGrid}>
-      {hotels.length > 0 ? (
-        hotels.map(hotel => (
-          <li key={hotel.id}>
-            <HotelCard hotel={hotel} />
-          </li>
-        ))
-      ) : (
-        <p className={css.noResults}>
-          Не знайдено жодного готелю за вашим запитом.
-        </p>
+    <>
+      {data && data.totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={data.totalPages}
+          onPageChange={setCurrentPage}
+        />
       )}
-    </ul>
+      <ul className={css.hotelGrid}>
+        {hotels.length > 0 ? (
+          hotels.map(hotel => (
+            <li key={hotel.id}>
+              <HotelCard hotel={hotel} />
+            </li>
+          ))
+        ) : (
+          <p className={css.noResults}>
+            Не знайдено жодного готелю за вашим запитом.
+          </p>
+        )}
+      </ul>
+    </>
   );
 }

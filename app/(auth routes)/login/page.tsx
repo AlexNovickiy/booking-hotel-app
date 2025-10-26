@@ -3,20 +3,38 @@ import { useState } from 'react';
 import css from './Login.module.css';
 import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/lib/api/clientApi';
+import { getMe, loginUser } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 export default function SignInPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
   const setUser = useAuthStore(state => state.setUser);
+  const setToken = useAuthStore(state => state.setToken);
+  const clearAuth = useAuthStore(state => state.clearAuth);
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const newUser = Object.fromEntries(formData) as NewUser;
-      const user = await loginUser(newUser);
-      setUser(user);
-      router.push('/profile');
+      const credentials = Object.fromEntries(formData) as NewUser;
+      const session = await loginUser(credentials);
+
+      if (session?.data?.accessToken) {
+        // Зберігаємо токен в store
+        setToken(session.data.accessToken);
+
+        // Отримуємо дані користувача
+        const user = await getMe();
+        if (user) {
+          setUser(user);
+          router.push('/profile');
+        } else {
+          clearAuth();
+          setIsError('Не вдалося отримати дані користувача');
+        }
+      } else {
+        setIsError('Не вдалося отримати токен доступу');
+      }
     } catch (error) {
+      clearAuth();
       setIsError(
         typeof error === 'object' && error !== null && 'message' in error
           ? ((error as { message?: string }).message ?? 'Oops... some error')
