@@ -11,11 +11,13 @@ type AuthProviderProps = {
 export default function AuthProvider({ children }: AuthProviderProps) {
   const setUser = useAuthStore(state => state.setUser);
   const clearAuth = useAuthStore(state => state.clearAuth);
+  const setToken = useAuthStore(state => state.setToken);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const isAuthenticated = await checkSession();
-      if (isAuthenticated) {
+      const session = await checkSession();
+      if (session.data.accessToken) {
+        setToken(session.data.accessToken);
         const user = await getMe();
         if (user) setUser(user);
       } else {
@@ -23,7 +25,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       }
     };
     fetchUser();
-  }, [setUser, clearAuth]);
+  }, [setUser, clearAuth, setToken]);
 
   return <>{children}</>;
 }

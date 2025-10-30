@@ -269,8 +269,16 @@ export async function analyzeReviewsWithGemini(
 }
 
 export async function checkSession() {
-  const response = await nextClient.get<CheckSession>('/auth/session');
-  return response.data.success;
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  // В реальному проекті тут буде запит до API
+  const mockResponse = {
+    data: {
+      accessToken: 'mock-jwt-token-1234567890',
+    },
+  };
+
+  return mockResponse;
 }
 
 const mockUser = {
