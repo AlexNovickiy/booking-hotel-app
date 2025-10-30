@@ -1,0 +1,120 @@
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+}
+
+.subheading {
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+  color: #464646;
+}
+
+.tabsWrap {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab,
+.tabActive {
+  border: none;
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  background: #e9ecef;
+  color: #232425;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+
+.tabActive {
+  background: #2256e3;
+  color: #fff;
+  box-shadow: 0 4px 16px 0 #2256e335;
+}
+
+.hotelsWrap {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hotelCard {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 15px #00133c12;
+  padding: 1.25rem 2rem;
+  transition: box-shadow 0.2s;
+}
+
+.hotelCard:hover {
+  box-shadow: 0 6px 22px #1f306630;
+}
+
+.hotelName {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.hotelScore {
+  color: #3877e5;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.scoreRed {
+  background: #ff5252;
+  color: #fff;
+  font-size: 2.1rem;
+  border-radius: 1rem;
+  min-width: 55px;
+  text-align: center;
+  margin-right: 1rem;
+  font-weight: bold;
+  padding: 0.6rem 1.1rem;
+}
+
+.scoreBlue {
+  background: #184bdb;
+  color: #fff;
+  font-size: 2.1rem;
+  border-radius: 1rem;
+  min-width: 55px;
+  text-align: center;
+  margin-right: 1rem;
+  font-weight: bold;
+  padding: 0.6rem 1.1rem;
+}
+
+.scoreGreen {
+  background: #12b670;
+  color: #fff;
+  font-size: 2.1rem;
+  border-radius: 1rem;
+  min-width: 55px;
+  text-align: center;
+  margin-right: 1rem;
+  font-weight: bold;
+  padding: 0.6rem 1.1rem;
+}
+
+.scoreOrange {
+  background: #efb401;
+  color: #fff;
+  font-size: 2.1rem;
+  border-radius: 1rem;
+  min-width: 55px;
+  text-align: center;
+  margin-right: 1rem;
+  font-weight: bold;
+  padding: 0.6rem 1.1rem;
+}

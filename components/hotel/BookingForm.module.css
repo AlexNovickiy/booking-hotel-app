@@ -242,6 +242,30 @@
   cursor: not-allowed;
 }
 
+.loadingSpinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #f59e0b;
+  border-top: 3px solid #fff3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 9px;
+  display: inline-block;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+:disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
 /* Responsive design */
 @media (max-width: 640px) {
   .modal {

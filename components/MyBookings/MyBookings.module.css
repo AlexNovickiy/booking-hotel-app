@@ -1,0 +1,111 @@
+.list {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 10px;
+}
+.card {
+  display: flex;
+  gap: 1.7rem;
+  background: #fff;
+  border-radius: 1.35rem;
+  box-shadow: 0 2px 19px #00112212;
+  padding: 1.5rem 2.25rem 1.5rem 1.1rem;
+  align-items: flex-start;
+  position: relative;
+}
+.image {
+  border-radius: 1rem;
+
+  object-fit: cover;
+  box-shadow: 0 2px 8px #0002;
+  width: auto;
+}
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.hotelTitle {
+  font-weight: bold;
+  font-size: 1.17rem;
+  color: #223150;
+}
+.dates {
+  color: #576272;
+  font-size: 1.01rem;
+}
+.guests {
+  font-size: 0.99rem;
+  color: #8d99ae;
+}
+.status {
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  padding: 0.33em 1.2em;
+  display: inline-block;
+  margin-top: 4px;
+}
+.status.confirmed {
+  background: #e8f8ea;
+  color: #10b85b;
+}
+.status.pending {
+  background: #fcf9e9;
+  color: #edb400;
+}
+.status.cancelled {
+  background: #faefef;
+  color: #f43f5e;
+}
+.specialReqs {
+  font-size: 0.9rem;
+  color: #1e40af;
+  margin-top: 2px;
+}
+.price {
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: #223155;
+  margin-top: 0.7rem;
+}
+.empty {
+  font-size: 1.25rem;
+  color: #8d99ae;
+  padding: 3rem;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .card {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1.2rem;
+  }
+  .image {
+    width: 100%;
+    height: 150px;
+  }
+}
+
+.goHotelBtn {
+  display: inline-block;
+  background: #2256e3;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.51em 1.35em;
+  border-radius: 0.85em;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 1px 6px #00113316;
+  transition: background 0.16s;
+  text-decoration: none;
+  margin-top: 20px;
+}
+.goHotelBtn:hover {
+  background: #153ca7;
+  color: #fff;
+}

@@ -17,7 +17,6 @@ if (typeof window !== 'undefined') {
           `Bearer ${token}`;
       }
     } catch (error) {
-      // Handle errors if necessary
       console.error('Error accessing localStorage:', error);
     }
     return config;

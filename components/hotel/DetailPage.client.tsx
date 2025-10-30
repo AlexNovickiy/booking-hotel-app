@@ -1,7 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { analyzeReviewsWithGemini, postReview } from '@/lib/api/clientApi';
+import {
+  analyzeReviewsWithGemini,
+  postReview,
+  createBooking,
+} from '@/lib/api/clientApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -9,9 +13,11 @@ import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import BookingForm from './BookingForm';
 import ReviewForm from './ReviewForm';
-import { BookingFormData } from '@/lib/types';
+import { BookingFormData, NewReview } from '@/lib/types';
 import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
+import { useAuthStore } from '@/lib/store/authStore';
+import { useRouter } from 'next/navigation';
 
 type DetailPageClientProps = {
   hotelId: string;
@@ -21,6 +27,8 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const router = useRouter();
 
   const {
     data: hotel,
@@ -61,13 +69,19 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     },
   });
 
-  const handleBookingSubmit = (bookingData: BookingFormData) => {
-    // Here you would typically send the booking data to your API
-    console.log('Booking submitted:', bookingData);
-    // You can add API call here later
-    alert(
-      "Бронювання успішно відправлено! Ми зв'яжемося з вами найближчим часом."
-    );
+  const {
+    mutate: submitBooking,
+    isPending: isSubmittingBooking,
+    isSuccess: bookingCreated,
+  } = useMutation({
+    mutationFn: createBooking,
+  });
+
+  const handleBookingSubmit = (formData: BookingFormData) => {
+    submitBooking({
+      ...formData,
+      hotelId,
+    });
   };
 
   const handleAnalyzeReviews = () => {
@@ -75,12 +89,20 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     setShowAnalysis(true);
   };
 
-  const handleReviewSubmit = (reviewData: { text: string; rating: number }) => {
+  const handleReviewSubmit = (reviewData: NewReview) => {
     submitReview(reviewData);
   };
 
   const handleReviewCancel = () => {
     setShowReviewForm(false);
+  };
+
+  const handleBookClick = () => {
+    if (isAuthenticated) {
+      setIsBookingModalOpen(true);
+    } else {
+      router.push('/login');
+    }
   };
 
   if (isLoading) return <Loader />;
@@ -126,10 +148,7 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
             </span>
             / ніч
           </div>
-          <button
-            className={css.bookButton}
-            onClick={() => setIsBookingModalOpen(true)}
-          >
+          <button className={css.bookButton} onClick={handleBookClick}>
             Забронювати
           </button>
         </div>
@@ -138,39 +157,49 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
       <div className={css.reviewsSection}>
         <div className={css.reviewsHeader}>
           <h2>Відгуки</h2>
-          <div className={css.reviewsActions}>
-            <button
-              className={css.addReviewButton}
-              onClick={() => setShowReviewForm(true)}
-            >
-              <Icon name="plus" className={css.addIcon} />
-              Залишити відгук
-            </button>
-            {hotel.reviews.length > 0 && (
+          {isAuthenticated && (
+            <div className={css.reviewsActions}>
               <button
-                className={css.analyzeButton}
-                onClick={handleAnalyzeReviews}
-                disabled={isAnalyzing}
+                className={css.addReviewButton}
+                onClick={() => setShowReviewForm(true)}
               >
-                {isAnalyzing ? (
-                  <>
-                    <Icon name="star" className={css.loadingIcon} />
-                    Аналізуємо...
-                  </>
-                ) : (
-                  <>
-                    <Icon name="star" className={css.analyzeIcon} />
-                    Проаналізувати відгуки
-                  </>
-                )}
+                <Icon name="plus" className={css.addIcon} />
+                Залишити відгук
               </button>
-            )}
-          </div>
+              {hotel.reviews.length > 0 && (
+                <button
+                  className={css.analyzeButton}
+                  onClick={handleAnalyzeReviews}
+                  disabled={isAnalyzing}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Icon name="star" className={css.loadingIcon} />
+                      Аналізуємо...
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="star" className={css.analyzeIcon} />
+                      Проаналізувати відгуки
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {showAnalysis && analysisResult && (
           <div className={css.analysisSection}>
-            <h3>🤖 Аналіз відгуків</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <h3>🤖 Аналіз відгуків</h3>
+              <button
+                className={css.closeButton}
+                onClick={() => setShowAnalysis(false)}
+              >
+                <Icon name="plus" className={css.closeIcon} />
+              </button>
+            </div>
             <div className={css.analysisContent}>
               {analysisResult.split('\n').map((line, index) => (
                 <p key={index} className={css.analysisLine}>
@@ -227,11 +256,14 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
       </div>
 
       <BookingForm
+        hotelId={hotelId}
         hotelTitle={hotel.title}
         price={hotel.price}
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
         onSubmit={handleBookingSubmit}
+        isSubmittingBooking={isSubmittingBooking}
+        bookingCreated={bookingCreated}
       />
     </div>
   );

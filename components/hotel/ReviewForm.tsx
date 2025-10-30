@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import css from './ReviewForm.module.css';
 import Icon from '../ui/Icon';
+import { NewReview } from '@/lib/types';
 
 type ReviewFormProps = {
   hotelId: string;
-  onSubmit: (reviewData: { text: string; rating: number }) => void;
+  onSubmit: (reviewData: NewReview) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
 };
@@ -18,8 +19,15 @@ export default function ReviewForm({
   isSubmitting = false,
 }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
+  const [cleanliness, setCleanliness] = useState(0);
+  const [location, setLocation] = useState(0);
   const [text, setText] = useState('');
-  const [errors, setErrors] = useState<{ rating?: string; text?: string }>({});
+  const [errors, setErrors] = useState<{
+    rating?: string;
+    text?: string;
+    cleanliness?: string;
+    location?: string;
+  }>({});
 
   const handleRatingClick = (selectedRating: number) => {
     setRating(selectedRating);
@@ -36,7 +44,12 @@ export default function ReviewForm({
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { rating?: string; text?: string } = {};
+    const newErrors: {
+      rating?: string;
+      text?: string;
+      cleanliness?: string;
+      location?: string;
+    } = {};
 
     if (rating === 0) {
       newErrors.rating = 'Оберіть рейтинг';
@@ -47,6 +60,8 @@ export default function ReviewForm({
     } else if (text.trim().length < 10) {
       newErrors.text = 'Відгук повинен містити мінімум 10 символів';
     }
+    if (cleanliness === 0) newErrors.cleanliness = 'Оцініть чистоту';
+    if (location === 0) newErrors.location = 'Оцініть локацію';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -56,7 +71,13 @@ export default function ReviewForm({
     e.preventDefault();
 
     if (validateForm()) {
-      onSubmit({ text: text.trim(), rating });
+      onSubmit({
+        hotelId: hotelId,
+        text: text.trim(),
+        rating,
+        cleanliness_score: cleanliness,
+        location_score: location,
+      });
     }
   };
 
@@ -116,7 +137,44 @@ export default function ReviewForm({
             <span className={css.errorText}>{errors.rating}</span>
           )}
         </div>
-
+        <div className={css.cleanlinessSection}>
+          <label className={css.label}>Оцініть чистоту *</label>
+          <select
+            value={cleanliness}
+            onChange={e => setCleanliness(Number(e.target.value))}
+            disabled={isSubmitting}
+            className={`${css.select} ${errors.cleanliness ? css.error : ''}`}
+          >
+            <option value={0}>Оберіть</option>
+            {[1, 2, 3, 4, 5].map(n => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+          {errors.cleanliness && (
+            <span className={css.errorText}>{errors.cleanliness}</span>
+          )}
+        </div>
+        <div className={css.locationSection}>
+          <label className={css.label}>Оцініть локацію *</label>
+          <select
+            value={location}
+            onChange={e => setLocation(Number(e.target.value))}
+            disabled={isSubmitting}
+            className={`${css.select} ${errors.location ? css.error : ''}`}
+          >
+            <option value={0}>Оберіть</option>
+            {[1, 2, 3, 4, 5].map(n => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+          {errors.location && (
+            <span className={css.errorText}>{errors.location}</span>
+          )}
+        </div>
         <div className={css.textSection}>
           <label htmlFor="reviewText" className={css.label}>
             Ваш відгук *

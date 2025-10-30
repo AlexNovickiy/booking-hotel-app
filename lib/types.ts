@@ -44,14 +44,27 @@ export type NewListing = {
 };
 
 export interface Review {
-  user: User;
   rating: number;
   text: string;
+  cleanliness_score: number;
+  location_score: number;
+}
+
+export interface NewReview extends Review {
+  hotelId: string;
+}
+
+export interface ResponseRewiew {
+  user: User;
   date: string;
+  rating: number;
+  text: string;
+  cleanliness_score: number;
+  location_score: number;
 }
 
 export interface HotelDetails extends Hotel {
-  reviews: Review[];
+  reviews: ResponseRewiew[];
 }
 
 export interface HotelsResponse {
@@ -75,3 +88,34 @@ export type SessionResponse = {
     accessToken: string;
   };
 };
+
+export type ClassificationHotel = { id: string; title: string; score: number };
+export type ClassificationAll = {
+  average: ClassificationHotel[];
+  cleanliness: ClassificationHotel[];
+  location: ClassificationHotel[];
+};
+export type ClassificationTab = 'average' | 'cleanliness' | 'location';
+
+export interface NewBooking {
+  hotelId: string;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  name: string;
+  email: string;
+  phone: string;
+  specialRequests?: string;
+}
+
+export interface Booking {
+  id: string;
+  hotel: Pick<Hotel, 'id' | 'title' | 'imageUrl' | 'location' | 'price'>;
+  user: Pick<User, 'id' | 'name' | 'email'>;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  createdAt: string;
+  specialRequests?: string;
+}

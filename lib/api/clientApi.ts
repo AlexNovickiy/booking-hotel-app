@@ -8,6 +8,9 @@ import {
   LoginCredentials,
   NewUser,
   SessionResponse,
+  ClassificationAll,
+  NewBooking,
+  Booking,
 } from '@/lib/types';
 import { nextClient } from './api';
 import axios from 'axios';
@@ -150,6 +153,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 5,
         text: 'Чудово! Чистота на найвищому рівні. Локація ідеальна, все сподобалось.',
         date: '2025-09-10',
+        cleanliness_score: 4,
+        location_score: 5,
       },
       {
         user: {
@@ -161,6 +166,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 4,
         text: 'Трохи шумно вночі, але локація супер.',
         date: '2025-08-25',
+        cleanliness_score: 3,
+        location_score: 4,
       },
       {
         user: {
@@ -172,6 +179,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 5,
         text: 'Власник привітний, все сподобалось.',
         date: '2025-08-01',
+        cleanliness_score: 5,
+        location_score: 2,
       },
       {
         user: {
@@ -183,6 +192,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 3,
         text: 'Ціна зависока для такого рівня сервісу.',
         date: '2025-07-15',
+        cleanliness_score: 5,
+        location_score: 3,
       },
     ],
   };
@@ -279,4 +290,147 @@ export async function registerUser(userData: NewUser) {
   // const response = await nextClient.post<User>('/auth/register', userData);
   // return response.data;
   return mockUser;
+}
+
+export async function getAllClassificationTopHotels(): Promise<ClassificationAll> {
+  // Симуляція затримки
+  await new Promise(res => setTimeout(res, 200));
+
+  // Всі готелі, сортовані за відповідним рейтингом, slice не використовується
+  const average = [...mockHotels]
+    .sort(
+      (a, b) =>
+        b.ratings_summary.average_rating - a.ratings_summary.average_rating
+    )
+    .map(h => ({
+      id: h.id,
+      title: h.title,
+      score: h.ratings_summary.average_rating,
+    }));
+
+  const cleanliness = [...mockHotels]
+    .sort(
+      (a, b) =>
+        b.ratings_summary.cleanliness_score -
+        a.ratings_summary.cleanliness_score
+    )
+    .map(h => ({
+      id: h.id,
+      title: h.title,
+      score: h.ratings_summary.cleanliness_score,
+    }));
+
+  const location = [...mockHotels]
+    .sort(
+      (a, b) =>
+        b.ratings_summary.location_score - a.ratings_summary.location_score
+    )
+    .map(h => ({
+      id: h.id,
+      title: h.title,
+      score: h.ratings_summary.location_score,
+    }));
+
+  return { average, cleanliness, location };
+}
+
+export async function createBooking(
+  newBooking: NewBooking
+): Promise<{ success: boolean }> {
+  await new Promise(res => setTimeout(res, 300));
+  return { success: true };
+}
+
+export async function fetchMyBookings(): Promise<Booking[]> {
+  await new Promise(res => setTimeout(res, 200));
+  return [
+    {
+      id: '1',
+      hotel: {
+        id: '1',
+        title: 'Затишний будиночок у Карпатах',
+        imageUrl: '',
+        location: 'Яремче',
+        price: 1800,
+      },
+      user: {
+        id: 'user-123',
+        name: 'Олександр',
+        email: 'novickiisasha78@gmail.com',
+      },
+      checkIn: '2025-12-12',
+      checkOut: '2025-12-15',
+      guests: 2,
+      status: 'confirmed',
+      createdAt: '2025-10-01T09:00:00.000Z',
+      specialRequests: 'Тиха кімната',
+    },
+  ];
+}
+
+// --- BOOKINGS BY HOTEL (MOCK) ---
+export async function fetchHotelBookings(hotelId: string): Promise<Booking[]> {
+  // Імітація затримки та повернення бронювань для конкретного готелю
+  await new Promise(res => setTimeout(res, 250));
+
+  // Демонстраційні зайняті періоди для різних готелів
+  const demo: Record<string, Booking[]> = {
+    '1': [
+      {
+        id: 'b-101',
+        hotel: {
+          id: '1',
+          title: 'Затишний будиночок у Карпатах',
+          imageUrl: '',
+          location: 'Яремче',
+          price: 1800,
+        },
+        user: { id: 'u1', name: 'Анна', email: 'anna@example.com' },
+        checkIn: '2025-12-01',
+        checkOut: '2025-12-03',
+        guests: 2,
+        status: 'confirmed',
+        createdAt: '2025-10-05T12:00:00.000Z',
+        specialRequests: '',
+      },
+      {
+        id: 'b-102',
+        hotel: {
+          id: '1',
+          title: 'Затишний будиночок у Карпатах',
+          imageUrl: '',
+          location: 'Яремче',
+          price: 1800,
+        },
+        user: { id: 'u2', name: 'Ігор', email: 'igor@example.com' },
+        checkIn: '2025-12-10',
+        checkOut: '2025-12-12',
+        guests: 3,
+        status: 'confirmed',
+        createdAt: '2025-10-06T12:00:00.000Z',
+        specialRequests: '',
+      },
+    ],
+    '2': [
+      {
+        id: 'b-201',
+        hotel: {
+          id: '2',
+          title: 'Студія в центрі Києва (Люкс)',
+          imageUrl: '',
+          location: 'Київ',
+          price: 3200,
+        },
+        user: { id: 'u3', name: 'Катерина', email: 'katya@example.com' },
+        checkIn: '2025-11-20',
+        checkOut: '2025-11-25',
+        guests: 1,
+        status: 'confirmed',
+        createdAt: '2025-10-02T12:00:00.000Z',
+        specialRequests: '',
+      },
+    ],
+  };
+
+  return demo[hotelId] || [];
 }

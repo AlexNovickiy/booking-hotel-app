@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { CheckSession, Hotel, HotelDetails, HotelsResponse } from '@/lib/types';
 import { nextServer } from './apiNext';
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
 // *** TANSTACK QUERY PREFETCHING ***
 export const prefetchHotels = async (
@@ -33,18 +33,9 @@ export const prefetchUserData = async (queryClient: QueryClient) => {
 
 export async function checkServerSession() {
   try {
-    // Отримуємо заголовки авторизації
-    const headersList = await headers();
-    const authorization = headersList.get('authorization');
-
-    if (!authorization) {
-      throw new Error('No authentication token found');
-    }
-
     const cookieStore = await cookies();
     const response = await nextServer.get<CheckSession>('/auth/session', {
       headers: {
-        Authorization: authorization.substring(7),
         Cookie: cookieStore.toString(),
       },
     });
@@ -138,6 +129,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 5,
         text: 'Чудово! Чистота на найвищому рівні. Локація ідеальна, все сподобалось.',
         date: '2025-09-10',
+        cleanliness_score: 4,
+        location_score: 5,
       },
       {
         user: {
@@ -149,6 +142,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 4,
         text: 'Трохи шумно вночі, але локація супер.',
         date: '2025-08-25',
+        cleanliness_score: 3,
+        location_score: 4,
       },
       {
         user: {
@@ -160,6 +155,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 5,
         text: 'Власник привітний, все сподобалось.',
         date: '2025-08-01',
+        cleanliness_score: 4,
+        location_score: 5,
       },
       {
         user: {
@@ -171,6 +168,8 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
         rating: 3,
         text: 'Ціна зависока для такого рівня сервісу.',
         date: '2025-07-15',
+        cleanliness_score: 4,
+        location_score: 5,
       },
     ],
   };

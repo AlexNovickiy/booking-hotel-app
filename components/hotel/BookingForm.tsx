@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { BookingFormData } from '@/lib/types';
+import { useState, useEffect } from 'react';
+import { Booking, BookingFormData } from '@/lib/types';
 import css from './BookingForm.module.css';
 import Icon from '../ui/Icon';
+import { fetchHotelBookings } from '@/lib/api/clientApi';
 
 type BookingFormProps = {
+  hotelId: string;
   hotelTitle: string;
   price: number;
   isOpen: boolean;
@@ -14,12 +16,18 @@ type BookingFormProps = {
 };
 
 export default function BookingForm({
+  hotelId,
   hotelTitle,
   price,
   isOpen,
   onClose,
   onSubmit,
-}: BookingFormProps) {
+  isSubmittingBooking,
+  bookingCreated,
+}: BookingFormProps & {
+  isSubmittingBooking: boolean;
+  bookingCreated: boolean;
+}) {
   const [formData, setFormData] = useState<BookingFormData>({
     checkIn: '',
     checkOut: '',
@@ -31,6 +39,36 @@ export default function BookingForm({
   });
 
   const [errors, setErrors] = useState<Partial<BookingFormData>>({});
+  const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+  const [bookingsError, setBookingsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    setIsLoadingBookings(true);
+    setBookingsError(null);
+    fetchHotelBookings(hotelId)
+      .then(b => {
+        if (!cancelled) setExistingBookings(b);
+      })
+      .catch(() => {
+        if (!cancelled) setBookingsError('Не вдалося завантажити зайняті дати');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingBookings(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, hotelId]);
+
+  useEffect(() => {
+    if (bookingCreated) {
+      onClose();
+      alert('Бронювання успішно створено!');
+    }
+  }, [bookingCreated, onClose]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -83,6 +121,17 @@ export default function BookingForm({
       }
       if (checkOutDate <= checkInDate) {
         newErrors.checkOut = 'Дата виїзду повинна бути після дати заїзду';
+      }
+
+      // Overlap with existing bookings
+      const overlaps = existingBookings.some(b => {
+        const bStart = new Date(b.checkIn);
+        const bEnd = new Date(b.checkOut);
+        return checkInDate < bEnd && bStart < checkOutDate;
+      });
+      if (overlaps) {
+        newErrors.checkIn = 'Вибрані дати недоступні';
+        newErrors.checkOut = 'Вибрані дати недоступні';
       }
     }
 
@@ -154,9 +203,16 @@ export default function BookingForm({
                 onChange={handleInputChange}
                 className={`${css.input} ${errors.checkIn ? css.error : ''}`}
                 min={new Date().toISOString().split('T')[0]}
+                disabled={isSubmittingBooking}
               />
               {errors.checkIn && (
                 <span className={css.errorText}>{errors.checkIn}</span>
+              )}
+              {isLoadingBookings && (
+                <span className={css.label}>Завантаження зайнятих дат…</span>
+              )}
+              {bookingsError && (
+                <span className={css.errorText}>{bookingsError}</span>
               )}
             </div>
 
@@ -172,12 +228,29 @@ export default function BookingForm({
                 onChange={handleInputChange}
                 className={`${css.input} ${errors.checkOut ? css.error : ''}`}
                 min={formData.checkIn || new Date().toISOString().split('T')[0]}
+                disabled={isSubmittingBooking}
               />
               {errors.checkOut && (
                 <span className={css.errorText}>{errors.checkOut}</span>
               )}
             </div>
           </div>
+
+          {existingBookings.length > 0 && (
+            <div className={css.inputGroup}>
+              <span className={css.label}>Зайняті періоди</span>
+              <div className={css.totalInfo}>
+                {existingBookings.map(b => (
+                  <div key={b.id} className={css.totalLine}>
+                    <span>
+                      {new Date(b.checkIn).toLocaleDateString()} —{' '}
+                      {new Date(b.checkOut).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={css.guestsGroup}>
             <label htmlFor="guests" className={css.label}>
@@ -189,6 +262,7 @@ export default function BookingForm({
               value={formData.guests}
               onChange={handleInputChange}
               className={css.select}
+              disabled={isSubmittingBooking}
             >
               {[1, 2, 3, 4, 5, 6].map(num => (
                 <option key={num} value={num}>
@@ -213,6 +287,7 @@ export default function BookingForm({
                 onChange={handleInputChange}
                 className={`${css.input} ${errors.name ? css.error : ''}`}
                 placeholder="Введіть ваше повне ім'я"
+                disabled={isSubmittingBooking}
               />
               {errors.name && (
                 <span className={css.errorText}>{errors.name}</span>
@@ -231,6 +306,7 @@ export default function BookingForm({
                 onChange={handleInputChange}
                 className={`${css.input} ${errors.email ? css.error : ''}`}
                 placeholder="your@email.com"
+                disabled={isSubmittingBooking}
               />
               {errors.email && (
                 <span className={css.errorText}>{errors.email}</span>
@@ -249,6 +325,7 @@ export default function BookingForm({
                 onChange={handleInputChange}
                 className={`${css.input} ${errors.phone ? css.error : ''}`}
                 placeholder="+380 XX XXX XX XX"
+                disabled={isSubmittingBooking}
               />
               {errors.phone && (
                 <span className={css.errorText}>{errors.phone}</span>
@@ -267,6 +344,7 @@ export default function BookingForm({
                 className={css.textarea}
                 placeholder="Додаткові побажання до бронювання..."
                 rows={3}
+                disabled={isSubmittingBooking}
               />
             </div>
           </div>
@@ -309,10 +387,15 @@ export default function BookingForm({
               type="button"
               className={css.cancelButton}
               onClick={onClose}
+              disabled={isSubmittingBooking}
             >
               Скасувати
             </button>
-            <button type="submit" className={css.submitButton}>
+            <button
+              type="submit"
+              className={css.submitButton}
+              disabled={isSubmittingBooking}
+            >
               Підтвердити бронювання
             </button>
           </div>

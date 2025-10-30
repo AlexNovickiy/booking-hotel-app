@@ -8,6 +8,8 @@ import MyListings from '@/components/MyListings/MyListings';
 import css from './ProfileClient.module.css';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
+import Classification from '@/components/Classification/Classification';
+import MyBookings from '@/components/MyBookings/MyBookings';
 
 type ProfileSection =
   | 'my-listings'
@@ -37,11 +39,11 @@ export default function ProfileClient() {
       case 'my-listings':
         return <MyListings />;
       case 'bookings':
-        return <div>Мої бронювання (в розробці)</div>;
+        return <MyBookings />;
       case 'settings':
         return <div>Налаштування (в розробці)</div>;
       case 'classification':
-        return <div>Класифікація (в розробці)</div>;
+        return <Classification />;
       default:
         return <MyListings />;
     }
