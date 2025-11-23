@@ -11,7 +11,7 @@ import css from '@/app/Home.module.css';
 // Server Component
 export default async function HomePage() {
   const queryClient = new QueryClient();
-  const initialData = await fetchHotels('', 2);
+  const initialData = await fetchHotels('', 1);
   queryClient.prefetchQuery({
     queryKey: ['hotels', '', 2],
     queryFn: () => initialData,

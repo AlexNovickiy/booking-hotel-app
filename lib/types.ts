@@ -1,12 +1,22 @@
 export type CheckSession = {
-  success: boolean;
+  status: number;
+  message: string;
+  data: {
+    accessToken: string;
+  };
 };
 
 export type User = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  photo: string;
+  photo?: string;
+};
+
+export type UserResponse = {
+  status: number;
+  message: string;
+  data: User;
 };
 
 export type NewUser = {
@@ -21,12 +31,14 @@ export type LoginCredentials = {
 };
 
 export type Hotel = {
-  id: string;
+  _id: string;
   title: string;
   location: string;
   price: number;
   description: string;
   imageUrl: string;
+  ownerId: string;
+  reviews: Review[];
   ratings_summary: {
     average_rating: number;
     cleanliness_score: number;
@@ -44,8 +56,14 @@ export type NewListing = {
 };
 
 export interface Review {
+  _id: string;
+  user: {
+    name: string;
+    photo: string;
+  };
   rating: number;
   text: string;
+  date: string;
   cleanliness_score: number;
   location_score: number;
 }
@@ -63,14 +81,22 @@ export interface ResponseRewiew {
   location_score: number;
 }
 
-export interface HotelDetails extends Hotel {
-  reviews: ResponseRewiew[];
-}
+// export interface HotelDetails extends Hotel {
+//   reviews: ResponseRewiew[];
+// }
 
 export interface HotelsResponse {
-  hotels: Hotel[];
-  totalPages: number;
-  currentPage: number;
+  status: number;
+  message: string;
+  data: {
+    hotels: Hotel[];
+    page: number;
+    perPage: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
 }
 
 export type BookingFormData = {
@@ -109,13 +135,22 @@ export interface NewBooking {
 }
 
 export interface Booking {
-  id: string;
-  hotel: Pick<Hotel, 'id' | 'title' | 'imageUrl' | 'location' | 'price'>;
-  user: Pick<User, 'id' | 'name' | 'email'>;
+  _id: string;
+  hotelId: string;
+  userId: string;
+  hotel: Pick<Hotel, '_id' | 'title' | 'imageUrl' | 'location' | 'price'>;
+  user: Pick<User, '_id' | 'name' | 'email'>;
   checkIn: string;
   checkOut: string;
   guests: number;
   status: 'pending' | 'confirmed' | 'cancelled';
   createdAt: string;
+  updatedAt?: string;
   specialRequests?: string;
+}
+
+export interface BookingsResponse {
+  status: number;
+  message: string;
+  data: Booking[];
 }

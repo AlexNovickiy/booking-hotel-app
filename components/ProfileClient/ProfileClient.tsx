@@ -52,7 +52,7 @@ export default function ProfileClient() {
   return (
     <div className={css.profileGrid}>
       <Sidebar
-        user={user}
+        user={user.data}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
       />

@@ -25,7 +25,7 @@ export default function MyBookings() {
   return (
     <div className={css.list}>
       {bookings.map(b => (
-        <div className={css.card} key={b.id}>
+        <div className={css.card} key={b._id}>
           <div className={css.leftBlock}>
             <Image
               src={b.hotel.imageUrl}
@@ -34,7 +34,7 @@ export default function MyBookings() {
               width={145}
               height={105}
             />
-            <Link href={`/${b.hotel.id}`} className={css.goHotelBtn}>
+            <Link href={`/${b.hotel._id}`} className={css.goHotelBtn}>
               <span>Перейти до готелю</span>
               <span className={css.arrowIcon}> ↗</span>
             </Link>

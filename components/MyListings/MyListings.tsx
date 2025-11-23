@@ -29,7 +29,7 @@ export default function MyListings() {
       {listings.length > 0 ? (
         <div className={css.listingsGrid}>
           {listings.map(hotel => (
-            <HotelCard key={hotel.id} hotel={hotel} />
+            <HotelCard key={hotel._id} hotel={hotel} />
           ))}
         </div>
       ) : (

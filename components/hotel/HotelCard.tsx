@@ -9,7 +9,7 @@ type HotelCardProps = {
 };
 
 export default function HotelCard({ hotel }: HotelCardProps) {
-  const detailUrl = `/${hotel.id}`;
+  const detailUrl = `/${hotel._id}`;
   const rating = hotel.ratings_summary.average_rating.toFixed(1);
 
   return (

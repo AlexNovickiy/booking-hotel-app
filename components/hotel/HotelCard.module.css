@@ -56,6 +56,12 @@
   color: #2563eb;
 }
 
+.image {
+  width: 400px;
+  height: 250px;
+  object-fit: cover;
+}
+
 .location {
   font-size: 14px;
   color: #6b7280;

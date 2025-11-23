@@ -22,9 +22,13 @@ export default function HotelListClient({ initialData }: HotelListClientProps) {
     Number(searchParams.get('page')) || 1
   );
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['hotels', search, guests, currentPage],
-    queryFn: () => fetchHotels(search, guests, currentPage),
+    queryFn: () => fetchHotels(search, currentPage, 10, guests),
     placeholderData: keepPreviousData,
     initialData,
     refetchOnMount: false,
@@ -39,21 +43,21 @@ export default function HotelListClient({ initialData }: HotelListClientProps) {
       </p>
     );
 
-  const hotels = data?.hotels || [];
+  const hotels = response?.data?.hotels || [];
 
   return (
     <>
-      {data && data.totalPages > 1 && (
+      {response?.data?.totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={data.totalPages}
+          totalPages={response?.data?.totalPages}
           onPageChange={setCurrentPage}
         />
       )}
       <ul className={css.hotelGrid}>
         {hotels.length > 0 ? (
           hotels.map(hotel => (
-            <li key={hotel.id}>
+            <li key={hotel._id}>
               <HotelCard hotel={hotel} />
             </li>
           ))

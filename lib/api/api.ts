@@ -1,5 +1,3 @@
-'use client';
-
 import axios from 'axios';
 
 export const nextClient = axios.create({
@@ -9,15 +7,13 @@ export const nextClient = axios.create({
 
 if (typeof window !== 'undefined') {
   nextClient.interceptors.request.use(config => {
-    try {
-      const token = localStorage.getItem('accessToken');
+    const storedAuth = localStorage.getItem('auth-store');
+    if (storedAuth) {
+      const parsedAuth = JSON.parse(storedAuth);
+      const token = parsedAuth.state.token;
       if (token) {
-        config.headers = config.headers ?? {};
-        (config.headers as Record<string, string>).Authorization =
-          `Bearer ${token}`;
+        config.headers['Authorization'] = `Bearer ${token}`;
       }
-    } catch (error) {
-      console.error('Error accessing localStorage:', error);
     }
     return config;
   });

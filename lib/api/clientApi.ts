@@ -11,6 +11,9 @@ import {
   ClassificationAll,
   NewBooking,
   Booking,
+  User,
+  UserResponse,
+  BookingsResponse,
 } from '@/lib/types';
 import { nextClient } from './api';
 import axios from 'axios';
@@ -70,67 +73,74 @@ export async function generateDescriptionWithGemini(
   return await fetchGemini(payload);
 }
 
-// *** MOCK DATA & FUNCTIONS ***
-const mockHotels: Hotel[] = [
-  {
-    id: '1',
-    title: 'Затишний будиночок у Карпатах',
-    location: 'Яремче',
-    price: 1800,
-    description: '...',
-    imageUrl: 'https://placehold.co/400x250/1e40af/ffffff?text=Hotel+1',
-    ratings_summary: {
-      average_rating: 4.8,
-      cleanliness_score: 4.9,
-      location_score: 4.7,
-      total_reviews: 125,
-    },
-  },
-  {
-    id: '2',
-    title: 'Студія в центрі Києва (Люкс)',
-    location: 'Київ',
-    price: 3200,
-    description: '...',
-    imageUrl: 'https://placehold.co/400x250/2563eb/ffffff?text=Hotel+2',
-    ratings_summary: {
-      average_rating: 4.5,
-      cleanliness_score: 4.3,
-      location_score: 5.0,
-      total_reviews: 300,
-    },
-  },
-  {
-    id: '3',
-    title: 'Бунгало на березі',
-    location: 'Одеса',
-    price: 2500,
-    description: '...',
-    imageUrl: 'https://placehold.co/400x250/065f46/ffffff?text=Hotel+3',
-    ratings_summary: {
-      average_rating: 4.9,
-      cleanliness_score: 4.8,
-      location_score: 4.9,
-      total_reviews: 80,
-    },
-  },
-];
+// // *** MOCK DATA & FUNCTIONS ***
+// const mockHotels: Hotel[] = [
+//   {
+//     id: '1',
+//     title: 'Затишний будиночок у Карпатах',
+//     location: 'Яремче',
+//     price: 1800,
+//     description: '...',
+//     imageUrl: 'https://placehold.co/400x250/1e40af/ffffff?text=Hotel+1',
+//     ratings_summary: {
+//       average_rating: 4.8,
+//       cleanliness_score: 4.9,
+//       location_score: 4.7,
+//       total_reviews: 125,
+//     },
+//   },
+//   {
+//     id: '2',
+//     title: 'Студія в центрі Києва (Люкс)',
+//     location: 'Київ',
+//     price: 3200,
+//     description: '...',
+//     imageUrl: 'https://placehold.co/400x250/2563eb/ffffff?text=Hotel+2',
+//     ratings_summary: {
+//       average_rating: 4.5,
+//       cleanliness_score: 4.3,
+//       location_score: 5.0,
+//       total_reviews: 300,
+//     },
+//   },
+//   {
+//     id: '3',
+//     title: 'Бунгало на березі',
+//     location: 'Одеса',
+//     price: 2500,
+//     description: '...',
+//     imageUrl: 'https://placehold.co/400x250/065f46/ffffff?text=Hotel+3',
+//     ratings_summary: {
+//       average_rating: 4.9,
+//       cleanliness_score: 4.8,
+//       location_score: 4.9,
+//       total_reviews: 80,
+//     },
+//   },
+// ];
 
 export async function fetchHotels(
-  query: string = '',
-  guests: number = 2,
-  page: number = 1
+  q: string = '',
+  page: number = 1,
+  perPage: number = 10,
+  guests: number = 2
 ): Promise<HotelsResponse> {
-  console.log(`[SERVER FETCH] Fetching hotels for query: ${query}`);
-  await new Promise(resolve => setTimeout(resolve, 50));
+  const query = {
+    ...(q && { q }),
+    ...(page && { page: page.toString() }),
+    ...(perPage && { perPage: perPage.toString() }),
+    ...(guests && { guests: guests.toString() }),
+  };
 
-  const filteredHotels = mockHotels.filter(
-    h =>
-      h.title.toLowerCase().includes(query.toLowerCase()) ||
-      h.location.toLowerCase().includes(query.toLowerCase())
-  );
-
-  return { hotels: filteredHotels, totalPages: 2, currentPage: page };
+  try {
+    const response = await nextClient.get<HotelsResponse>('/hotels', {
+      params: query,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error in fetchHotels:', error);
+    throw error;
+  }
 }
 
 export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
@@ -200,25 +210,19 @@ export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
 }
 
 export async function fetchUserListings(): Promise<Hotel[]> {
-  console.log(`[SERVER FETCH] Fetching user listings for profile.`);
-  await new Promise(resolve => setTimeout(resolve, 50));
-  return mockHotels; // Return the mock hotels as user listings
+  const response = await nextClient.get<Hotel[]>('/hotels/my/listings');
+  return response.data;
 }
 
 // --- AUTH MOCK ---
 export async function loginUser(
   credentials: LoginCredentials
 ): Promise<SessionResponse> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  // В реальному проекті тут буде запит до API
-  const mockResponse = {
-    data: {
-      accessToken: 'mock-jwt-token-1234567890',
-    },
-  };
-
-  return mockResponse;
+  const response = await nextClient.post<SessionResponse>(
+    '/auth/login',
+    credentials
+  );
+  return response.data;
 }
 export async function logoutUser(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 300));
@@ -227,11 +231,14 @@ export async function logoutUser(): Promise<void> {
 // --- MUTATIONS ---
 export async function postReview(
   hotelId: number,
-  reviewData: { text: string; rating: number }
+  reviewData: {
+    text: string;
+    rating: number;
+    cleanliness_score: number;
+    location_score: number;
+  }
 ) {
   console.log(`[CLIENT API] Posting review for ${hotelId}:`, reviewData);
-
-  // В реальному проекті тут буде запит з авторизацією
 
   try {
     // const response = await authAxios.post(`/hotels/${hotelId}/reviews`, reviewData);
@@ -269,35 +276,25 @@ export async function analyzeReviewsWithGemini(
 }
 
 export async function checkSession() {
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  // В реальному проекті тут буде запит до API
-  const mockResponse = {
-    data: {
-      accessToken: 'mock-jwt-token-1234567890',
-    },
-  };
-
-  return mockResponse;
+  const response = await nextClient.post<CheckSession>('/auth/refresh');
+  return response.data;
 }
 
 const mockUser = {
-  id: 'user-123',
+  _id: '6909ceb6b354b1956994d1c4',
   name: 'Олександр',
   email: 'novickiisasha78@gmail.com',
   photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
 };
 
-export async function getMe() {
-  // const response = await nextClient.get<User>('/users/me');
-  // return response.data;
-  return mockUser;
+export async function getMe(): Promise<UserResponse> {
+  const response = await nextClient.get<UserResponse>('/users/me');
+  return response.data;
 }
 
 export async function registerUser(userData: NewUser) {
-  // const response = await nextClient.post<User>('/auth/register', userData);
-  // return response.data;
-  return mockUser;
+  const response = await nextClient.post('/auth/register', userData);
+  return response.data;
 }
 
 export async function getAllClassificationTopHotels(): Promise<ClassificationAll> {
@@ -350,30 +347,10 @@ export async function createBooking(
 }
 
 export async function fetchMyBookings(): Promise<Booking[]> {
-  await new Promise(res => setTimeout(res, 200));
-  return [
-    {
-      id: '1',
-      hotel: {
-        id: '1',
-        title: 'Затишний будиночок у Карпатах',
-        imageUrl: '',
-        location: 'Яремче',
-        price: 1800,
-      },
-      user: {
-        id: 'user-123',
-        name: 'Олександр',
-        email: 'novickiisasha78@gmail.com',
-      },
-      checkIn: '2025-12-12',
-      checkOut: '2025-12-15',
-      guests: 2,
-      status: 'confirmed',
-      createdAt: '2025-10-01T09:00:00.000Z',
-      specialRequests: 'Тиха кімната',
-    },
-  ];
+  const response = await nextClient.get<BookingsResponse>(
+    '/bookings/my-bookings'
+  );
+  return response.data.data;
 }
 
 // --- BOOKINGS BY HOTEL (MOCK) ---

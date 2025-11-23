@@ -24,7 +24,7 @@ export default function SignInPage() {
         // Отримуємо дані користувача
         const user = await getMe();
         if (user) {
-          setUser(user);
+          setUser(user.data);
           router.push('/profile');
         } else {
           clearAuth();
