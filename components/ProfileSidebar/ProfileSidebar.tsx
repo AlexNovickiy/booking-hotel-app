@@ -27,7 +27,7 @@ export default function Sidebar({
     <aside className={css.sidebar}>
       <div className={css.sidebarHeader}>
         <Image
-          src={user.photo}
+          src={user.photo || '/images/placeholder-image.png'}
           alt="User avatar"
           width={60}
           height={60}

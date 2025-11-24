@@ -18,10 +18,10 @@
 }
 .image {
   border-radius: 1rem;
-
   object-fit: cover;
   box-shadow: 0 2px 8px #0002;
-  width: auto;
+  width: 192px;
+  height: 140px;
 }
 .info {
   flex: 1;

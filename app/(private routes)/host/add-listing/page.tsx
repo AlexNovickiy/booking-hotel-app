@@ -1,5 +1,5 @@
 'use client';
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createNewListing,
@@ -9,18 +9,34 @@ import toast from 'react-hot-toast';
 import css from './AddListing.module.css';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
+import { Hotel } from '@/lib/types';
+import Image from 'next/image';
 
-export default function AddListingPage() {
+export default function AddListingPage({
+  listingId,
+  listing,
+}: {
+  listingId?: string;
+  listing?: Hotel;
+}) {
   // В реальному проекті використовуйте useState або Zustand для імітації аутентифікації
   const { isAuthenticated } = useAuthStore();
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const [title, setTitle] = useState('');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState(1500);
+  const [title, setTitle] = useState(listing?.title || '');
+  const [location, setLocation] = useState(listing?.location || '');
+  const [description, setDescription] = useState(listing?.description || '');
+  const [price, setPrice] = useState(listing?.price || 1500);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [maxGuests, setMaxGuests] = useState(listing?.maxGuests || 2);
+  const [defaultPlaceholder, setDefaultPlaceholder] = useState<string>(
+    '/images/createListing/placeholder-image-mb.png'
+  );
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(
+    listing?.imageUrl || null
+  );
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const createMutation = useMutation({
     mutationFn: createNewListing,
@@ -46,6 +62,34 @@ export default function AddListingPage() {
     },
   });
 
+  useEffect(() => {
+    const updatePlaceholder = () => {
+      const width = window.innerWidth;
+      if (width >= 1440) {
+        setDefaultPlaceholder('/images/createListing/placeholder-image-dt.png');
+      } else if (width >= 768) {
+        setDefaultPlaceholder('/images/createListing/placeholder-image-tb.png');
+      } else {
+        setDefaultPlaceholder('/images/createListing/placeholder-image-mb.png');
+      }
+    };
+
+    updatePlaceholder();
+    window.addEventListener('resize', updatePlaceholder);
+
+    return () => {
+      window.removeEventListener('resize', updatePlaceholder);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (uploadedImageUrl) {
+        URL.revokeObjectURL(uploadedImageUrl);
+      }
+    };
+  }, [uploadedImageUrl]);
+
   if (!isAuthenticated)
     return (
       <p className={css.authMessage}>
@@ -56,20 +100,26 @@ export default function AddListingPage() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!title || !location || !description || price <= 0 || !imageFile) {
+    if (
+      !title ||
+      !location ||
+      !description ||
+      price <= 0 ||
+      maxGuests <= 0 ||
+      !imageFile
+    ) {
       toast.error(
         "Заповніть усі обов'язкові поля (включаючи зображення та ціну)."
       );
       return;
     }
 
-    // Тут ми імітуємо, що файл imageFile буде завантажено,
-    // а потім URL зображення буде відправлено на бекенд разом з іншими даними.
     const formData = new FormData();
     formData.append('title', title);
     formData.append('location', location);
     formData.append('description', description);
     formData.append('price', String(price));
+    formData.append('maxGuests', String(maxGuests));
     formData.append('image', imageFile);
 
     createMutation.mutate(formData);
@@ -81,10 +131,6 @@ export default function AddListingPage() {
       return;
     }
     geminiMutation.mutate({ title, location });
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setImageFile(e.target.files?.[0] ?? null);
   };
 
   return (
@@ -128,19 +174,63 @@ export default function AddListingPage() {
           />
         </div>
 
-        <div className={`${css.formGroup} ${css.imageUpload}`}>
-          <label htmlFor="imageFile">Зображення об&apos;єкта</label>
+        <div className={css.formGroup}>
+          <label htmlFor="maxGuests">Максимальна кількість гостей</label>
           <input
-            type="file"
-            id="imageFile"
-            accept="image/*"
-            onChange={handleFileChange}
+            type="number"
+            id="maxGuests"
+            value={maxGuests}
+            onChange={e => setMaxGuests(Number(e.target.value))}
             required
+            min={1}
             className={css.input}
           />
-          {imageFile && (
-            <p className={css.note}>Обрано файл: {imageFile.name}</p>
-          )}
+        </div>
+
+        <div className={css.imageSection}>
+          <div
+            className={css.imageWrapper}
+            onClick={() => fileInputRef.current?.click()}
+            style={{ cursor: 'pointer' }}
+          >
+            <Image
+              src={uploadedImageUrl || listing?.imageUrl || defaultPlaceholder}
+              alt="Прев'ю"
+              className={css.coverPreview}
+              width={865}
+              height={635}
+              unoptimized
+              sizes="(max-width: 767px) 335px, (min-width: 768px) and (max-width: 1439px) 704px, (min-width: 1440px) 865px"
+              style={{ width: '100%', height: 'auto' }}
+              priority={true}
+            />
+          </div>
+
+          <button
+            type="button"
+            className={css.uploadBtn}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Завантажити фото
+          </button>
+
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={e => {
+              const file = e.currentTarget.files?.[0] ?? null;
+              if (file) {
+                if (uploadedImageUrl) {
+                  URL.revokeObjectURL(uploadedImageUrl);
+                }
+                const objectUrl = URL.createObjectURL(file);
+                setUploadedImageUrl(objectUrl);
+                setImageFile(file);
+              }
+            }}
+          />
         </div>
 
         <div className={css.formGroup}>

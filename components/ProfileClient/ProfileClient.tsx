@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getMe } from '@/lib/api/clientApi';
 import Sidebar from '@/components/ProfileSidebar/ProfileSidebar';
@@ -10,6 +10,7 @@ import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Classification from '@/components/Classification/Classification';
 import MyBookings from '@/components/MyBookings/MyBookings';
+import { useProfileTabStore } from '@/lib/store/profileTabStore';
 
 type ProfileSection =
   | 'my-listings'
@@ -18,8 +19,10 @@ type ProfileSection =
   | 'classification';
 
 export default function ProfileClient() {
-  const [activeSection, setActiveSection] =
-    useState<ProfileSection>('my-listings');
+  const { activeTab, setActiveTab } = useProfileTabStore();
+  const [activeSection, setActiveSection] = useState<ProfileSection>(
+    (activeTab as ProfileSection) || 'my-listings'
+  );
 
   const {
     data: user,
@@ -30,6 +33,10 @@ export default function ProfileClient() {
     queryFn: getMe,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  useEffect(() => {
+    setActiveTab(activeSection);
+  }, [activeSection, setActiveTab]);
 
   if (isLoading) return <Loader />;
   if (isError || !user) return <ErrorMessage />;

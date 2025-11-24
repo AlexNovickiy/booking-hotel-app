@@ -76,35 +76,38 @@
   color: #fff;
   font-size: 2.1rem;
   border-radius: 1rem;
-  min-width: 55px;
+  max-width: 70px;
+  width: 100%;
   text-align: center;
   margin-right: 1rem;
   font-weight: bold;
-  padding: 0.6rem 1.1rem;
+  padding: 8px;
 }
 
 .scoreBlue {
   background: #184bdb;
   color: #fff;
   font-size: 2.1rem;
+  max-width: 70px;
+  width: 100%;
   border-radius: 1rem;
-  min-width: 55px;
   text-align: center;
   margin-right: 1rem;
   font-weight: bold;
-  padding: 0.6rem 1.1rem;
+  padding: 8px;
 }
 
 .scoreGreen {
   background: #12b670;
   color: #fff;
+  max-width: 70px;
+  width: 100%;
   font-size: 2.1rem;
   border-radius: 1rem;
-  min-width: 55px;
   text-align: center;
   margin-right: 1rem;
   font-weight: bold;
-  padding: 0.6rem 1.1rem;
+  padding: 8px;
 }
 
 .scoreOrange {
@@ -112,9 +115,26 @@
   color: #fff;
   font-size: 2.1rem;
   border-radius: 1rem;
-  min-width: 55px;
+  max-width: 70px;
+  width: 100%;
   text-align: center;
   margin-right: 1rem;
   font-weight: bold;
-  padding: 0.6rem 1.1rem;
+  padding: 8px;
+}
+
+.goHotelLink {
+  margin-left: auto;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s;
+  background-color: #48a5ae;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.goHotelLink:hover {
+  color: #153ca7;
 }

@@ -3,7 +3,6 @@
 import {
   CheckSession,
   Hotel,
-  HotelDetails,
   HotelsResponse,
   LoginCredentials,
   NewUser,
@@ -14,6 +13,13 @@ import {
   User,
   UserResponse,
   BookingsResponse,
+  OwnListingsResponse,
+  ResponseClassificationAll,
+  HotelResponse,
+  NewReview,
+  Review,
+  ResponseReview,
+  BookingResponse,
 } from '@/lib/types';
 import { nextClient } from './api';
 import axios from 'axios';
@@ -73,52 +79,6 @@ export async function generateDescriptionWithGemini(
   return await fetchGemini(payload);
 }
 
-// // *** MOCK DATA & FUNCTIONS ***
-// const mockHotels: Hotel[] = [
-//   {
-//     id: '1',
-//     title: 'Затишний будиночок у Карпатах',
-//     location: 'Яремче',
-//     price: 1800,
-//     description: '...',
-//     imageUrl: 'https://placehold.co/400x250/1e40af/ffffff?text=Hotel+1',
-//     ratings_summary: {
-//       average_rating: 4.8,
-//       cleanliness_score: 4.9,
-//       location_score: 4.7,
-//       total_reviews: 125,
-//     },
-//   },
-//   {
-//     id: '2',
-//     title: 'Студія в центрі Києва (Люкс)',
-//     location: 'Київ',
-//     price: 3200,
-//     description: '...',
-//     imageUrl: 'https://placehold.co/400x250/2563eb/ffffff?text=Hotel+2',
-//     ratings_summary: {
-//       average_rating: 4.5,
-//       cleanliness_score: 4.3,
-//       location_score: 5.0,
-//       total_reviews: 300,
-//     },
-//   },
-//   {
-//     id: '3',
-//     title: 'Бунгало на березі',
-//     location: 'Одеса',
-//     price: 2500,
-//     description: '...',
-//     imageUrl: 'https://placehold.co/400x250/065f46/ffffff?text=Hotel+3',
-//     ratings_summary: {
-//       average_rating: 4.9,
-//       cleanliness_score: 4.8,
-//       location_score: 4.9,
-//       total_reviews: 80,
-//     },
-//   },
-// ];
-
 export async function fetchHotels(
   q: string = '',
   page: number = 1,
@@ -143,75 +103,16 @@ export async function fetchHotels(
   }
 }
 
-export async function fetchHotelDetails(id: string): Promise<HotelDetails> {
-  console.log(`[SERVER FETCH] Fetching hotel details for ID: ${id}`);
-  await new Promise(resolve => setTimeout(resolve, 50));
-  const hotel = mockHotels.find(h => h.id === id);
-  if (!hotel) throw new Error('Hotel not found');
-
-  return {
-    ...hotel,
-    description: `Розкішний опис готелю №${id}. Ідеальне місце для відпочинку та роботи.`,
-    reviews: [
-      {
-        user: {
-          id: '1',
-          name: 'Анна К.',
-          email: 'anna@example.com',
-          photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
-        },
-        rating: 5,
-        text: 'Чудово! Чистота на найвищому рівні. Локація ідеальна, все сподобалось.',
-        date: '2025-09-10',
-        cleanliness_score: 4,
-        location_score: 5,
-      },
-      {
-        user: {
-          id: '2',
-          name: 'Богдан Л.',
-          email: 'bogdan@example.com',
-          photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
-        },
-        rating: 4,
-        text: 'Трохи шумно вночі, але локація супер.',
-        date: '2025-08-25',
-        cleanliness_score: 3,
-        location_score: 4,
-      },
-      {
-        user: {
-          id: '3',
-          name: 'Катерина П.',
-          email: 'katerina@example.com',
-          photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
-        },
-        rating: 5,
-        text: 'Власник привітний, все сподобалось.',
-        date: '2025-08-01',
-        cleanliness_score: 5,
-        location_score: 2,
-      },
-      {
-        user: {
-          id: '4',
-          name: 'Ігор С.',
-          email: 'igor@example.com',
-          photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
-        },
-        rating: 3,
-        text: 'Ціна зависока для такого рівня сервісу.',
-        date: '2025-07-15',
-        cleanliness_score: 5,
-        location_score: 3,
-      },
-    ],
-  };
+export async function fetchHotelDetails(id: string): Promise<Hotel> {
+  const response = await nextClient.get<HotelResponse>(`/hotels/${id}`);
+  return response.data.data;
 }
 
 export async function fetchUserListings(): Promise<Hotel[]> {
-  const response = await nextClient.get<Hotel[]>('/hotels/my/listings');
-  return response.data;
+  const response = await nextClient.get<OwnListingsResponse>(
+    '/hotels/my/listings'
+  );
+  return response.data.data;
 }
 
 // --- AUTH MOCK ---
@@ -229,32 +130,31 @@ export async function logoutUser(): Promise<void> {
 }
 
 // --- MUTATIONS ---
-export async function postReview(
-  hotelId: number,
-  reviewData: {
-    text: string;
-    rating: number;
-    cleanliness_score: number;
-    location_score: number;
-  }
-) {
-  console.log(`[CLIENT API] Posting review for ${hotelId}:`, reviewData);
-
-  try {
-    // const response = await authAxios.post(`/hotels/${hotelId}/reviews`, reviewData);
-    // return response.data;
-
-    // Mock response
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return { success: true };
-  } catch (error) {
-    console.error('Error posting review:', error);
-    throw error;
-  }
+export async function postReview({
+  hotelId,
+  text,
+  rating,
+  cleanliness_score,
+  location_score,
+}: NewReview): Promise<Review> {
+  const response = await nextClient.post<ResponseReview>(
+    `/hotels/${hotelId}/reviews`,
+    {
+      text,
+      rating,
+      cleanliness_score,
+      location_score,
+    }
+  );
+  return response.data.data;
 }
 
 export async function createNewListing(formData: FormData) {
-  const response = await axios.post('/api/listings', formData);
+  const response = await nextClient.post('/hotels', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
   return response.data;
 }
@@ -280,13 +180,6 @@ export async function checkSession() {
   return response.data;
 }
 
-const mockUser = {
-  _id: '6909ceb6b354b1956994d1c4',
-  name: 'Олександр',
-  email: 'novickiisasha78@gmail.com',
-  photo: 'https://placehold.co/120x120/1f2937/ffffff?text=U',
-};
-
 export async function getMe(): Promise<UserResponse> {
   const response = await nextClient.get<UserResponse>('/users/me');
   return response.data;
@@ -298,52 +191,18 @@ export async function registerUser(userData: NewUser) {
 }
 
 export async function getAllClassificationTopHotels(): Promise<ClassificationAll> {
-  // Симуляція затримки
-  await new Promise(res => setTimeout(res, 200));
-
-  // Всі готелі, сортовані за відповідним рейтингом, slice не використовується
-  const average = [...mockHotels]
-    .sort(
-      (a, b) =>
-        b.ratings_summary.average_rating - a.ratings_summary.average_rating
-    )
-    .map(h => ({
-      id: h.id,
-      title: h.title,
-      score: h.ratings_summary.average_rating,
-    }));
-
-  const cleanliness = [...mockHotels]
-    .sort(
-      (a, b) =>
-        b.ratings_summary.cleanliness_score -
-        a.ratings_summary.cleanliness_score
-    )
-    .map(h => ({
-      id: h.id,
-      title: h.title,
-      score: h.ratings_summary.cleanliness_score,
-    }));
-
-  const location = [...mockHotels]
-    .sort(
-      (a, b) =>
-        b.ratings_summary.location_score - a.ratings_summary.location_score
-    )
-    .map(h => ({
-      id: h.id,
-      title: h.title,
-      score: h.ratings_summary.location_score,
-    }));
-
-  return { average, cleanliness, location };
+  const response = await nextClient.get<ResponseClassificationAll>(
+    '/hotels/classification'
+  );
+  return response.data.data;
 }
 
-export async function createBooking(
-  newBooking: NewBooking
-): Promise<{ success: boolean }> {
-  await new Promise(res => setTimeout(res, 300));
-  return { success: true };
+export async function createBooking(newBooking: NewBooking): Promise<Booking> {
+  const response = await nextClient.post<BookingResponse>(
+    '/bookings',
+    newBooking
+  );
+  return response.data.data;
 }
 
 export async function fetchMyBookings(): Promise<Booking[]> {
@@ -355,67 +214,8 @@ export async function fetchMyBookings(): Promise<Booking[]> {
 
 // --- BOOKINGS BY HOTEL (MOCK) ---
 export async function fetchHotelBookings(hotelId: string): Promise<Booking[]> {
-  // Імітація затримки та повернення бронювань для конкретного готелю
-  await new Promise(res => setTimeout(res, 250));
-
-  // Демонстраційні зайняті періоди для різних готелів
-  const demo: Record<string, Booking[]> = {
-    '1': [
-      {
-        id: 'b-101',
-        hotel: {
-          id: '1',
-          title: 'Затишний будиночок у Карпатах',
-          imageUrl: '',
-          location: 'Яремче',
-          price: 1800,
-        },
-        user: { id: 'u1', name: 'Анна', email: 'anna@example.com' },
-        checkIn: '2025-12-01',
-        checkOut: '2025-12-03',
-        guests: 2,
-        status: 'confirmed',
-        createdAt: '2025-10-05T12:00:00.000Z',
-        specialRequests: '',
-      },
-      {
-        id: 'b-102',
-        hotel: {
-          id: '1',
-          title: 'Затишний будиночок у Карпатах',
-          imageUrl: '',
-          location: 'Яремче',
-          price: 1800,
-        },
-        user: { id: 'u2', name: 'Ігор', email: 'igor@example.com' },
-        checkIn: '2025-12-10',
-        checkOut: '2025-12-12',
-        guests: 3,
-        status: 'confirmed',
-        createdAt: '2025-10-06T12:00:00.000Z',
-        specialRequests: '',
-      },
-    ],
-    '2': [
-      {
-        id: 'b-201',
-        hotel: {
-          id: '2',
-          title: 'Студія в центрі Києва (Люкс)',
-          imageUrl: '',
-          location: 'Київ',
-          price: 3200,
-        },
-        user: { id: 'u3', name: 'Катерина', email: 'katya@example.com' },
-        checkIn: '2025-11-20',
-        checkOut: '2025-11-25',
-        guests: 1,
-        status: 'confirmed',
-        createdAt: '2025-10-02T12:00:00.000Z',
-        specialRequests: '',
-      },
-    ],
-  };
-
-  return demo[hotelId] || [];
+  const response = await nextClient.get<BookingsResponse>(
+    `/bookings/hotel/${hotelId}`
+  );
+  return response.data.data;
 }

@@ -5,11 +5,12 @@ import css from './Classification.module.css';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import { ClassificationTab } from '@/lib/types';
+import Link from 'next/link';
 
 const TABS: { key: ClassificationTab; label: string }[] = [
-  { key: 'average', label: 'Загальний рейтинг (Average)' },
-  { key: 'cleanliness', label: 'Найвища чистота (Cleanliness)' },
-  { key: 'location', label: 'Найкраща локація (Location)' },
+  { key: 'average', label: 'Загальний рейтинг' },
+  { key: 'cleanliness', label: 'Найвища чистота' },
+  { key: 'location', label: 'Найкраща локація' },
 ];
 
 function getColorClass(score: number) {
@@ -37,8 +38,7 @@ export const Classification = () => {
     <div>
       <h2 className={css.heading}>Аналітика: Класифікація Найкращих Готелів</h2>
       <div className={css.subheading}>
-        Тут ви можете переглянути Топ-готелів, відсортованих за агрегованими
-        оцінками з MongoDB.
+        Топ-готелів, відсортованих за агрегованими оцінками.
       </div>
       <div className={css.tabsWrap}>
         {TABS.map(tab => (
@@ -62,6 +62,9 @@ export const Classification = () => {
                 Бал: <span>{hotel.score}</span>
               </div>
             </div>
+            <Link className={css.goHotelLink} href={`/${hotel.id}`}>
+              Переглянути
+            </Link>
           </div>
         ))}
       </div>

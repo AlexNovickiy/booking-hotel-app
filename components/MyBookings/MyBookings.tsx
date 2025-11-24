@@ -48,11 +48,6 @@ export default function MyBookings() {
             <div className={css.status + ' ' + css[b.status]}>
               {labelStatus(b.status)}
             </div>
-            {b.specialRequests && (
-              <div className={css.specialReqs}>
-                Побажання: {b.specialRequests}
-              </div>
-            )}
             <div className={css.price}>
               Ціна: {b.hotel.price.toLocaleString()} грн / ніч
             </div>

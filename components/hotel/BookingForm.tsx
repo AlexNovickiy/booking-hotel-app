@@ -5,10 +5,15 @@ import { Booking, BookingFormData } from '@/lib/types';
 import css from './BookingForm.module.css';
 import Icon from '../ui/Icon';
 import { fetchHotelBookings } from '@/lib/api/clientApi';
+import { toast } from 'react-hot-toast';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { uk } from 'date-fns/locale';
 
 type BookingFormProps = {
   hotelId: string;
   hotelTitle: string;
+  maxGuests: number;
   price: number;
   isOpen: boolean;
   onClose: () => void;
@@ -19,6 +24,7 @@ export default function BookingForm({
   hotelId,
   hotelTitle,
   price,
+  maxGuests,
   isOpen,
   onClose,
   onSubmit,
@@ -28,6 +34,8 @@ export default function BookingForm({
   isSubmittingBooking: boolean;
   bookingCreated: boolean;
 }) {
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
   const [formData, setFormData] = useState<BookingFormData>({
     checkIn: '',
     checkOut: '',
@@ -46,6 +54,7 @@ export default function BookingForm({
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
+    document.body.style.overflow = 'hidden';
     setIsLoadingBookings(true);
     setBookingsError(null);
     fetchHotelBookings(hotelId)
@@ -53,20 +62,24 @@ export default function BookingForm({
         if (!cancelled) setExistingBookings(b);
       })
       .catch(() => {
-        if (!cancelled) setBookingsError('Не вдалося завантажити зайняті дати');
+        if (!cancelled) {
+          setBookingsError('Не вдалося завантажити зайняті дати');
+          toast.error('Не вдалося завантажити зайняті дати');
+        }
       })
       .finally(() => {
         if (!cancelled) setIsLoadingBookings(false);
       });
     return () => {
       cancelled = true;
+      document.body.style.overflow = 'auto';
     };
   }, [isOpen, hotelId]);
 
   useEffect(() => {
     if (bookingCreated) {
       onClose();
-      alert('Бронювання успішно створено!');
+      toast.success('Бронювання успішно створено!');
     }
   }, [bookingCreated, onClose]);
 
@@ -89,6 +102,21 @@ export default function BookingForm({
       }));
     }
   };
+
+  // Формируем список заблокированных дат на основе existingBookings
+  const getDisabledDates = () => {
+    const disabled: Date[] = [];
+    existingBookings.forEach(booking => {
+      const start = new Date(booking.checkIn);
+      const end = new Date(booking.checkOut);
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        disabled.push(new Date(d));
+      }
+    });
+    return disabled;
+  };
+
+  const disabledDates = getDisabledDates();
 
   const validateForm = (): boolean => {
     const newErrors: Partial<BookingFormData> = {};
@@ -195,24 +223,29 @@ export default function BookingForm({
               <label htmlFor="checkIn" className={css.label}>
                 Дата заїзду
               </label>
-              <input
-                type="date"
-                id="checkIn"
-                name="checkIn"
-                value={formData.checkIn}
-                onChange={handleInputChange}
+              <DatePicker
+                selected={checkInDate}
+                onChange={date => {
+                  setCheckInDate(date);
+                  setFormData(prev => ({
+                    ...prev,
+                    checkIn: date ? date.toISOString().split('T')[0] : '',
+                  }));
+                }}
+                selectsStart
+                startDate={checkInDate}
+                endDate={checkOutDate}
+                minDate={new Date()}
+                excludeDates={disabledDates}
+                locale={uk}
+                dateFormat="dd.MM.yyyy"
+                placeholderText="Оберіть дату заїзду"
                 className={`${css.input} ${errors.checkIn ? css.error : ''}`}
-                min={new Date().toISOString().split('T')[0]}
-                disabled={isSubmittingBooking}
+                disabled={isSubmittingBooking || isLoadingBookings}
+                calendarClassName={css.customCalendar}
               />
               {errors.checkIn && (
                 <span className={css.errorText}>{errors.checkIn}</span>
-              )}
-              {isLoadingBookings && (
-                <span className={css.label}>Завантаження зайнятих дат…</span>
-              )}
-              {bookingsError && (
-                <span className={css.errorText}>{bookingsError}</span>
               )}
             </div>
 
@@ -220,37 +253,32 @@ export default function BookingForm({
               <label htmlFor="checkOut" className={css.label}>
                 Дата виїзду
               </label>
-              <input
-                type="date"
-                id="checkOut"
-                name="checkOut"
-                value={formData.checkOut}
-                onChange={handleInputChange}
+              <DatePicker
+                selected={checkOutDate}
+                onChange={date => {
+                  setCheckOutDate(date);
+                  setFormData(prev => ({
+                    ...prev,
+                    checkOut: date ? date.toISOString().split('T')[0] : '',
+                  }));
+                }}
+                selectsEnd
+                startDate={checkInDate}
+                endDate={checkOutDate}
+                minDate={checkInDate || new Date()}
+                excludeDates={disabledDates}
+                locale={uk}
+                dateFormat="dd.MM.yyyy"
+                placeholderText="Оберіть дату виїзду"
                 className={`${css.input} ${errors.checkOut ? css.error : ''}`}
-                min={formData.checkIn || new Date().toISOString().split('T')[0]}
-                disabled={isSubmittingBooking}
+                disabled={isSubmittingBooking || isLoadingBookings}
+                calendarClassName={css.customCalendar}
               />
               {errors.checkOut && (
                 <span className={css.errorText}>{errors.checkOut}</span>
               )}
             </div>
           </div>
-
-          {existingBookings.length > 0 && (
-            <div className={css.inputGroup}>
-              <span className={css.label}>Зайняті періоди</span>
-              <div className={css.totalInfo}>
-                {existingBookings.map(b => (
-                  <div key={b.id} className={css.totalLine}>
-                    <span>
-                      {new Date(b.checkIn).toLocaleDateString()} —{' '}
-                      {new Date(b.checkOut).toLocaleDateString()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className={css.guestsGroup}>
             <label htmlFor="guests" className={css.label}>
@@ -264,7 +292,7 @@ export default function BookingForm({
               className={css.select}
               disabled={isSubmittingBooking}
             >
-              {[1, 2, 3, 4, 5, 6].map(num => (
+              {Array.from({ length: maxGuests }, (_, i) => i + 1).map(num => (
                 <option key={num} value={num}>
                   {num} {num === 1 ? 'гость' : num < 5 ? 'гості' : 'гостей'}
                 </option>

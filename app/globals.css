@@ -17,6 +17,12 @@ body {
  * Глобальні стилі для контейнера, тіла та футера
  */
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .appContainer {
   min-height: 1000px; /* min-height: 100vh */
   display: flex;

@@ -20,6 +20,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  scrollbar-width: none;
 }
 
 .header {
@@ -80,6 +81,8 @@
 }
 
 .form {
+  display: flex;
+  flex-direction: column;
   padding: 2rem;
 }
 
@@ -97,6 +100,7 @@
 
 .guestsGroup {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .personalInfo {
@@ -122,6 +126,7 @@
   font-weight: 500;
   color: #374151;
   margin-bottom: 0.5rem;
+  width: 100%;
 }
 
 .input,
@@ -160,7 +165,7 @@
 }
 
 .textarea {
-  resize: vertical;
+  resize: none;
   min-height: 80px;
 }
 
@@ -264,6 +269,41 @@
 :disabled {
   opacity: 0.65;
   pointer-events: none;
+}
+
+/* Кастомизация react-datepicker */
+:global(.react-datepicker) {
+  font-family: var(--font-roboto), sans-serif;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.react-datepicker__header) {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+
+:global(.react-datepicker__day--selected),
+:global(.react-datepicker__day--in-range) {
+  background-color: #2196f3;
+  color: white;
+}
+
+:global(.react-datepicker__day--excluded) {
+  background-color: #ffebee;
+  color: #c62828;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+:global(.react-datepicker__day--excluded:hover) {
+  background-color: #ffcdd2;
+}
+
+:global(.react-datepicker__day:hover) {
+  background-color: #e3f2fd;
 }
 
 /* Responsive design */

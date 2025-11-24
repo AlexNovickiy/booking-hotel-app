@@ -37,6 +37,7 @@ export type Hotel = {
   price: number;
   description: string;
   imageUrl: string;
+  maxGuests: number;
   ownerId: string;
   reviews: Review[];
   ratings_summary: {
@@ -45,6 +46,18 @@ export type Hotel = {
     location_score: number;
     total_reviews: number;
   };
+};
+
+export type HotelResponse = {
+  status: number;
+  message: string;
+  data: Hotel;
+};
+
+export type OwnListingsResponse = {
+  status: number;
+  message: string;
+  data: Hotel[];
 };
 
 export type NewListing = {
@@ -68,22 +81,19 @@ export interface Review {
   location_score: number;
 }
 
-export interface NewReview extends Review {
+export interface NewReview {
   hotelId: string;
-}
-
-export interface ResponseRewiew {
-  user: User;
-  date: string;
-  rating: number;
   text: string;
+  rating: number;
   cleanliness_score: number;
   location_score: number;
 }
 
-// export interface HotelDetails extends Hotel {
-//   reviews: ResponseRewiew[];
-// }
+export interface ResponseReview {
+  status: number;
+  message: string;
+  data: Review;
+}
 
 export interface HotelsResponse {
   status: number;
@@ -121,6 +131,13 @@ export type ClassificationAll = {
   cleanliness: ClassificationHotel[];
   location: ClassificationHotel[];
 };
+
+export type ResponseClassificationAll = {
+  status: number;
+  message: string;
+  data: ClassificationAll;
+};
+
 export type ClassificationTab = 'average' | 'cleanliness' | 'location';
 
 export interface NewBooking {
@@ -153,4 +170,10 @@ export interface BookingsResponse {
   status: number;
   message: string;
   data: Booking[];
+}
+
+export interface BookingResponse {
+  status: number;
+  message: string;
+  data: Booking;
 }

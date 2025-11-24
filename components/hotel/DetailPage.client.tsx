@@ -7,28 +7,36 @@ import {
   createBooking,
 } from '@/lib/api/clientApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import BookingForm from './BookingForm';
 import ReviewForm from './ReviewForm';
-import { BookingFormData, NewReview } from '@/lib/types';
+import { BookingFormData, Hotel, NewReview } from '@/lib/types';
 import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
 import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 type DetailPageClientProps = {
   hotelId: string;
+  hotelData: Hotel;
 };
 
-export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
+export default function DetailPageClient({
+  hotelId,
+  hotelData,
+}: DetailPageClientProps) {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const user = useAuthStore(state => state.user);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     data: hotel,
@@ -58,14 +66,13 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     isPending: isSubmittingReview,
     error: reviewError,
   } = useMutation({
-    mutationFn: (reviewData: { text: string; rating: number }) => {
-      return postReview(parseInt(hotelId), reviewData);
+    mutationFn: (reviewData: NewReview) => {
+      return postReview(reviewData);
     },
     onSuccess: () => {
       setShowReviewForm(false);
-      // Invalidate and refetch hotel details to show new review
-      // This would typically be handled by the query invalidation
-      alert('Відгук успішно додано!');
+      queryClient.invalidateQueries({ queryKey: ['hotelDetails', hotelId] });
+      toast.success('Відгук успішно додано!');
     },
   });
 
@@ -89,9 +96,8 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
     setShowAnalysis(true);
   };
 
-  const handleReviewSubmit = (reviewData: NewReview) => {
+  const handleReviewSubmit = (reviewData: NewReview) =>
     submitReview(reviewData);
-  };
 
   const handleReviewCancel = () => {
     setShowReviewForm(false);
@@ -148,9 +154,18 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
             </span>
             / ніч
           </div>
-          <button className={css.bookButton} onClick={handleBookClick}>
-            Забронювати
-          </button>
+          {user?._id !== hotelData.ownerId ? (
+            <button className={css.bookButton} onClick={handleBookClick}>
+              Забронювати
+            </button>
+          ) : (
+            <Link
+              className={css.editListingLink}
+              href={`/host/${hotelId}/edit-review`}
+            >
+              Редагувати відгук
+            </Link>
+          )}
         </div>
       </div>
 
@@ -159,13 +174,15 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
           <h2>Відгуки</h2>
           {isAuthenticated && (
             <div className={css.reviewsActions}>
-              <button
-                className={css.addReviewButton}
-                onClick={() => setShowReviewForm(true)}
-              >
-                <Icon name="plus" className={css.addIcon} />
-                Залишити відгук
-              </button>
+              {user?._id !== hotelData.ownerId && (
+                <button
+                  className={css.addReviewButton}
+                  onClick={() => setShowReviewForm(true)}
+                >
+                  <Icon name="plus" className={css.addIcon} />
+                  Залишити відгук
+                </button>
+              )}
               {hotel.reviews.length > 0 && (
                 <button
                   className={css.analyzeButton}
@@ -233,10 +250,14 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
 
         {hotel.reviews.length > 0 ? (
           hotel.reviews.map(review => (
-            <div key={review.user.id} className={css.reviewCard}>
+            <div key={review._id} className={css.reviewCard}>
               <div className={css.reviewHeader}>
                 <Image
-                  src={review.user.photo}
+                  src={
+                    review.user.photo !== null
+                      ? review.user.photo
+                      : '/images/placeholder-image.png'
+                  }
                   alt={review.user.name}
                   width={40}
                   height={40}
@@ -245,6 +266,10 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
                 <div>
                   <p className={css.reviewAuthor}>{review.user.name}</p>
                   <p className={css.reviewDate}>{review.date}</p>
+                </div>
+                <div className={css.reviewRating}>
+                  <Icon name="star" className={css.starIcon} />
+                  <span>{review.rating.toFixed(1)}</span>
                 </div>
               </div>
               <p className={css.reviewText}>{review.text}</p>
@@ -264,6 +289,7 @@ export default function DetailPageClient({ hotelId }: DetailPageClientProps) {
         onSubmit={handleBookingSubmit}
         isSubmittingBooking={isSubmittingBooking}
         bookingCreated={bookingCreated}
+        maxGuests={hotel.maxGuests}
       />
     </div>
   );

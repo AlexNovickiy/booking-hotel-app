@@ -16,6 +16,8 @@ export default function MyListings() {
   if (isLoading) return <Loader />;
   if (isError) return <ErrorMessage />;
 
+  console.log('User Listings Data:', data);
+
   const listings = data || [];
 
   return (
