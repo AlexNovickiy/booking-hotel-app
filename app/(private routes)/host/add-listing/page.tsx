@@ -1,9 +1,10 @@
 'use client';
-import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createNewListing,
   generateDescriptionWithGemini,
+  updateListing,
 } from '@/lib/api/clientApi';
 import toast from 'react-hot-toast';
 import css from './AddListing.module.css';
@@ -12,14 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Hotel } from '@/lib/types';
 import Image from 'next/image';
 
-export default function AddListingPage({
-  listingId,
-  listing,
-}: {
-  listingId?: string;
-  listing?: Hotel;
-}) {
-  // В реальному проекті використовуйте useState або Zustand для імітації аутентифікації
+export default function AddListingPage({ listing }: { listing?: Hotel }) {
   const { isAuthenticated } = useAuthStore();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -41,12 +35,30 @@ export default function AddListingPage({
   const createMutation = useMutation({
     mutationFn: createNewListing,
     onSuccess: data => {
-      toast.success(`Оголошення успішно створено (ID: ${data.id})!`);
+      toast.success(`Оголошення успішно створено (ID: ${data._id})!`);
       queryClient.invalidateQueries({ queryKey: ['userListings'] }); // Оновити список оголошень користувача
       router.push('/profile'); // Редирект на сторінку профілю
     },
     onError: () => {
       toast.error('Помилка при створенні оголошення.');
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({
+      formData,
+      hotelId,
+    }: {
+      formData: FormData;
+      hotelId: string;
+    }) => updateListing(formData, hotelId),
+    onSuccess: data => {
+      toast.success(`Оголошення успішно оновлено (ID: ${data._id})!`);
+      queryClient.invalidateQueries({ queryKey: ['userListings'] });
+      router.push('/profile');
+    },
+    onError: () => {
+      toast.error('Помилка при оновленні оголошення.');
     },
   });
 
@@ -61,6 +73,35 @@ export default function AddListingPage({
       toast.error('Помилка генерації опису.');
     },
   });
+
+  useEffect(() => {
+    let isActive = true;
+
+    const preloadImageFile = async () => {
+      if (!listing?.imageUrl || imageFile) return;
+
+      try {
+        const response = await fetch(listing.imageUrl);
+        const blob = await response.blob();
+        const extension = blob.type?.split('/')[1] || 'jpg';
+        const file = new File([blob], `listing-image.${extension}`, {
+          type: blob.type || 'image/jpeg',
+        });
+
+        if (isActive) {
+          setImageFile(file);
+        }
+      } catch (error) {
+        console.error('Failed to preload listing image file:', error);
+      }
+    };
+
+    preloadImageFile();
+
+    return () => {
+      isActive = false;
+    };
+  }, [listing?.imageUrl, imageFile]);
 
   useEffect(() => {
     const updatePlaceholder = () => {
@@ -122,7 +163,12 @@ export default function AddListingPage({
     formData.append('maxGuests', String(maxGuests));
     formData.append('image', imageFile);
 
-    createMutation.mutate(formData);
+    if (listing) {
+      updateMutation.mutate({ formData, hotelId: listing._id });
+
+    } else {
+      createMutation.mutate(formData);
+    }
   };
 
   const handleGenerate = () => {
@@ -260,11 +306,15 @@ export default function AddListingPage({
         <button
           type="submit"
           className={css.submitButton}
-          disabled={
-            createMutation.isPending || geminiMutation.isPending || !imageFile
-          }
+          disabled={createMutation.isPending || geminiMutation.isPending}
         >
-          {createMutation.isPending ? 'Створення...' : 'Створити оголошення'}
+          {listing
+            ? updateMutation.isPending
+              ? 'Оновлення...'
+              : 'Оновити'
+            : createMutation.isPending
+              ? 'Створення...'
+              : 'Створити оголошення'}
         </button>
       </form>
     </div>

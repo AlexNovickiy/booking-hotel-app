@@ -37,9 +37,7 @@ export const Classification = () => {
   return (
     <div>
       <h2 className={css.heading}>Аналітика: Класифікація Найкращих Готелів</h2>
-      <div className={css.subheading}>
-        Топ-готелів, відсортованих за агрегованими оцінками.
-      </div>
+      <div className={css.subheading}>Топ-готелів.</div>
       <div className={css.tabsWrap}>
         {TABS.map(tab => (
           <button

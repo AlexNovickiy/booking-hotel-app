@@ -24,13 +24,11 @@ import {
 import { nextClient } from './api';
 import axios from 'axios';
 import { useAuthStore } from '@/lib/store/authStore';
+import { GoogleGenAI } from '@google/genai';
 
-const GEMINI_API_URL =
-  process.env.NEXT_PUBLIC_GEMINI_API_URL +
-    '?key=' +
-    process.env.NEXT_PUBLIC_API_KEY_GEMINI || '';
-
-console.log(GEMINI_API_URL);
+const ai = new GoogleGenAI({
+  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY, // Используем клиентскую переменную
+});
 
 // Функція для отримання заголовків авторизації
 export const getAuthHeaders = () => {
@@ -46,21 +44,17 @@ type GeminiPayload = {
 // --- GEMINI --- //
 
 const fetchGemini = async (payload: GeminiPayload) => {
-  const response = await fetch(GEMINI_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: payload.contents[0].parts[0].text,
+    });
 
-  if (!response.ok) {
-    throw new Error(`Gemini API error: ${response.statusText}`);
+    return response.text || 'Не вдалося згенерувати відповідь.';
+  } catch (error) {
+    console.error('Error fetching Gemini API:', error);
+    return 'Помилка при отриманні відповіді від моделі.';
   }
-
-  const result = await response.json();
-  const text =
-    result.candidates?.[0]?.content?.parts?.[0]?.text ||
-    'Не вдалося згенерувати відповідь.';
-  return text;
 };
 
 export async function generateDescriptionWithGemini(
@@ -126,7 +120,7 @@ export async function loginUser(
   return response.data;
 }
 export async function logoutUser(): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await nextClient.delete('/auth/logout');
 }
 
 // --- MUTATIONS ---
@@ -156,7 +150,16 @@ export async function createNewListing(formData: FormData) {
     },
   });
 
-  return response.data;
+  return response.data.data;
+}
+
+export async function updateListing(formData: FormData, hotelId: string) {
+  const response = await nextClient.patch(`hotels/${hotelId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data.data;
 }
 
 export async function analyzeReviewsWithGemini(
@@ -218,4 +221,8 @@ export async function fetchHotelBookings(hotelId: string): Promise<Booking[]> {
     `/bookings/hotel/${hotelId}`
   );
   return response.data.data;
+}
+
+export async function deleteListing(hotelId: string): Promise<void> {
+  await nextClient.delete(`/hotels/${hotelId}`);
 }

@@ -5,6 +5,7 @@ import {
   analyzeReviewsWithGemini,
   postReview,
   createBooking,
+  deleteListing,
 } from '@/lib/api/clientApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +14,7 @@ import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import BookingForm from './BookingForm';
 import ReviewForm from './ReviewForm';
+import ConfirmDeleteContent from '@/components/ConfirmDeleteContent/ConfirmDeleteContent';
 import { BookingFormData, Hotel, NewReview } from '@/lib/types';
 import css from './DetailPage.client.module.css';
 import Icon from '../ui/Icon';
@@ -20,6 +22,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import Modal from '../Modal/Modal';
 
 type DetailPageClientProps = {
   hotelId: string;
@@ -33,6 +36,7 @@ export default function DetailPageClient({
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const user = useAuthStore(state => state.user);
   const router = useRouter();
@@ -46,6 +50,7 @@ export default function DetailPageClient({
     queryKey: ['hotelDetails', hotelId],
     queryFn: () => fetchHotelDetails(hotelId),
     refetchOnMount: false,
+    initialData: hotelData,
   });
 
   const {
@@ -111,6 +116,22 @@ export default function DetailPageClient({
     }
   };
 
+  const confirmDeleteListing = async () => {
+    try {
+      await deleteListing(hotelId);
+      toast.success('Оголошення успішно видалено!');
+      router.push('/profile');
+    } catch (error) {
+      toast.error('Помилка при видаленні оголошення.');
+    } finally {
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const cancelDeleteListing = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   if (isLoading) return <Loader />;
   if (isError || !hotel) return <ErrorMessage />;
 
@@ -159,12 +180,20 @@ export default function DetailPageClient({
               Забронювати
             </button>
           ) : (
-            <Link
-              className={css.editListingLink}
-              href={`/host/${hotelId}/edit-review`}
-            >
-              Редагувати відгук
-            </Link>
+            <div className={css.hostActions}>
+              <Link
+                className={css.editListingLink}
+                href={`/host/edit-listing/${hotelId}`}
+              >
+                Редагувати
+              </Link>
+              <button
+                className={css.deleteListingButton}
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                Видалити
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -291,6 +320,15 @@ export default function DetailPageClient({
         bookingCreated={bookingCreated}
         maxGuests={hotel.maxGuests}
       />
+
+      {isDeleteModalOpen && (
+        <Modal onClose={cancelDeleteListing}>
+          <ConfirmDeleteContent
+            onConfirm={confirmDeleteListing}
+            onCancel={cancelDeleteListing}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

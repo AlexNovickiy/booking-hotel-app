@@ -1,0 +1,54 @@
+.wrapper {
+  background-color: #ffffff; /* Білий фон */
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333333; /* Темно-сірий текст */
+  margin-bottom: 16px;
+}
+
+.text {
+  font-size: 1rem;
+  color: #666666; /* Сірий текст */
+  margin-bottom: 24px;
+}
+
+.buttonsRow {
+  display: flex;
+  justify-content: center; /* Центрування кнопок */
+  gap: 16px; /* Відступи між кнопками */
+}
+
+.saveButton {
+  background-color: #f0f0f0; /* Світло-сірий фон */
+  color: #333333; /* Темно-сірий текст */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #e0e0e0; /* Трохи темніший сірий при наведенні */
+}
+
+.deleteButton {
+  background-color: #ff4d4f; /* Червоний фон */
+  color: #ffffff; /* Білий текст */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.deleteButton:hover {
+  background-color: #d9363e; /* Трохи темніший червоний при наведенні */
+}

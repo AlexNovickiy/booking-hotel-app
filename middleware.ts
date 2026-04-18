@@ -1,89 +1,34 @@
-// import { cookies } from 'next/headers';
-// import { NextRequest, NextResponse } from 'next/server';
-// import { checkServerSession } from './lib/api/serverApi';
-// import { parse } from 'cookie';
+import { NextRequest, NextResponse } from 'next/server';
 
-// const publicPaths = ['/login', '/register'];
-// const privatePaths = ['/profile', '/host'];
+const publicPaths = ['/login', '/register'];
+const privatePaths = ['/profile', '/host'];
 
-// export async function middleware(req: NextRequest) {
-//   const { pathname } = req.nextUrl;
-//   const cookieStore = await cookies();
-//   const refreshToken = cookieStore.get('refreshToken')?.value;
-//   const accessToken = req
-//     ? req.headers.get('authorization')?.split(' ')[1]
-//     : null;
-//   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-//   const isPrivatePath = privatePaths.some(path => pathname.startsWith(path));
+export async function middleware(req: NextRequest, res: NextResponse) {
+  const { pathname } = req.nextUrl;
+  const refreshToken = req.cookies.get('refreshToken')?.value;
+  const sessionId = req.cookies.get('sessionId')?.value;
+  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+  const isPrivatePath = privatePaths.some(path => pathname.startsWith(path));
 
-//   if (!accessToken) {
-//     if (refreshToken) {
-//       const response = await checkServerSession();
-//       const setCookie = response?.headers['set-cookie'];
-//       if (setCookie) {
-//         const cookiesArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-//         for (const cookieString of cookiesArray) {
-//           const parsedCookie = parse(cookieString);
-//           const options = {
-//             httpOnly: true,
-//             expires: parsedCookie.Expires
-//               ? new Date(parsedCookie.Expires)
-//               : undefined,
-//           };
-//           if (parsedCookie['refreshToken']) {
-//             cookieStore.set(
-//               'refreshToken',
-//               parsedCookie['refreshToken'],
-//               options
-//             );
-//           }
-//           if (parsedCookie['sessionId']) {
-//             cookieStore.set('sessionId', parsedCookie['sessionId'], options);
-//           }
-//         }
+  const isAuthenticated = !!(refreshToken || sessionId);
 
-//         if (isPublicPath) {
-//           return NextResponse.redirect(new URL('/', req.url), {
-//             headers: {
-//               Authorization: response.headers.authorization,
-//               Cookie: cookieStore.toString(),
-//             },
-//           });
-//         }
+  // Если пользователь авторизован и пытается зайти на публичные страницы
+  if (isAuthenticated && isPublicPath) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
-//         if (isPrivatePath) {
-//           return NextResponse.next({
-//             headers: {
-//               Authorization: response.headers.authorization,
-//               Cookie: cookieStore.toString(),
-//             },
-//           });
-//         }
-//       }
-//     }
+  // Если пользователь не авторизован и пытается зайти на приватные страницы
+  if (!isAuthenticated && isPrivatePath) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
 
-//     if (isPublicPath) {
-//       return NextResponse.next();
-//     }
+  return NextResponse.next();
+}
 
-//     if (isPrivatePath) {
-//       return NextResponse.redirect(new URL('/login', req.url));
-//     }
-//   }
+export const config = {
+  matcher: ['/profile/:path*', '/host/:path*', '/login', '/register'],
+};
 
-//   if (isPublicPath) {
-//     return NextResponse.redirect(new URL('/', req.url));
-//   }
-
-//   if (isPrivatePath) {
-//     return NextResponse.next();
-//   }
-// }
-
-// export const config = {
-//   matcher: ['/profile/:path*', '/host/:path*', '/login', '/register'],
-// };
-
-const middleware = () => {};
+// const middleware = () => {};
 
 export default middleware;

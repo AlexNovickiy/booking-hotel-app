@@ -41,7 +41,7 @@ export const prefetchUserData = async (queryClient: QueryClient) => {
 export async function checkServerSession() {
   try {
     const cookieStore = await cookies();
-    const response = await nextServer.get<CheckSession>('/auth/session', {
+    const response = await nextServer.post<CheckSession>('/auth/refresh', {
       headers: {
         Cookie: cookieStore.toString(),
       },
