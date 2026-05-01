@@ -5,6 +5,7 @@ import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { getMe, loginUser } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
+import LoginGoogleBtn from '@/components/LoginGoogleBtn/LoginGoogleBtn';
 export default function SignInPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
@@ -71,6 +72,7 @@ export default function SignInPage() {
           <button type="submit" className={css.submitButton}>
             Login
           </button>
+          <LoginGoogleBtn />
         </div>
 
         {isError && <p className={css.error}>{isError}</p>}

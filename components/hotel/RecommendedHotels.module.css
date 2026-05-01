@@ -1,0 +1,71 @@
+.section {
+  padding: 32px 0 16px;
+  margin-bottom: 32px;
+  border-bottom: 3px solid #e5e7eb;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.status {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scoreBar {
+  position: relative;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-top: 18px;
+}
+
+.scoreFill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.scoreLabel {
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7c3aed;
+}

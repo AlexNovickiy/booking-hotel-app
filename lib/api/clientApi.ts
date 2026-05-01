@@ -20,6 +20,8 @@ import {
   Review,
   ResponseReview,
   BookingResponse,
+  RecommendationsResponse,
+  RecommendedHotel,
 } from '@/lib/types';
 import { nextClient } from './api';
 import axios from 'axios';
@@ -226,3 +228,18 @@ export async function fetchHotelBookings(hotelId: string): Promise<Booking[]> {
 export async function deleteListing(hotelId: string): Promise<void> {
   await nextClient.delete(`/hotels/${hotelId}`);
 }
+
+export async function fetchRecommendations(topN: number = 5): Promise<RecommendedHotel[]> {
+  const response = await nextClient.get<RecommendationsResponse>('/recommendations', {
+    params: { topN },
+  });
+  return response.data.data;
+}
+
+export const getGoogleAuthUrl = async () => {
+  const res = await nextClient.get('/auth/get-oauth-url');
+  return res.data?.data ?? { url: '' };
+};
+
+export const loginWithGoogle = (body: { code: string }) =>
+  nextClient.post('/auth/confirm-oauth', body);

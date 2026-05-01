@@ -6,6 +6,7 @@ import {
 import { fetchHotels } from '@/lib/api/serverApi';
 import HotelListClient from '@/components/hotel/HotelList.client';
 import SearchBarClient from '@/components/hotel/SearchBar.client';
+import RecommendedHotels from '@/components/hotel/RecommendedHotels.client';
 import css from '@/app/Home.module.css';
 
 // Server Component
@@ -26,6 +27,9 @@ export default async function HomePage() {
 
         {/* Клієнтські компоненти для інтерактивності */}
         <SearchBarClient />
+
+        {/* Персоналізовані рекомендації (показується лише авторизованим) */}
+        <RecommendedHotels />
 
         <div className={css.hotelGridWrapper}>
           <HotelListClient initialData={initialData} />

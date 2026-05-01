@@ -177,3 +177,16 @@ export interface BookingResponse {
   message: string;
   data: Booking;
 }
+
+export interface RecommendedHotel extends Hotel {
+  /** Косинусне сходство з профілем користувача [0..1], null при cold-start */
+  similarity_score: number | null;
+  /** 'personalized' | 'top_rated' */
+  recommendation_reason: 'personalized' | 'top_rated';
+}
+
+export interface RecommendationsResponse {
+  status: number;
+  message: string;
+  data: RecommendedHotel[];
+}

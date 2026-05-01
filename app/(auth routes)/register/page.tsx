@@ -4,6 +4,7 @@ import css from './Register.module.css';
 import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api/clientApi';
+import LoginGoogleBtn from '@/components/LoginGoogleBtn/LoginGoogleBtn';
 export default function SignUpPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
@@ -63,6 +64,7 @@ export default function SignUpPage() {
           <button type="submit" className={css.submitButton}>
             Register
           </button>
+          <LoginGoogleBtn />
         </div>
 
         {isError && <p className={css.error}>{isError}</p>}
