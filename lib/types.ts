@@ -160,7 +160,7 @@ export interface Booking {
   checkIn: string;
   checkOut: string;
   guests: number;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   createdAt: string;
   updatedAt?: string;
   specialRequests?: string;
@@ -176,6 +176,14 @@ export interface BookingResponse {
   status: number;
   message: string;
   data: Booking;
+}
+
+export interface ActiveBookingCheckResponse {
+  status: number;
+  data: {
+    hasActiveBooking: boolean;
+    booking: Booking | null;
+  };
 }
 
 export interface RecommendedHotel extends Hotel {

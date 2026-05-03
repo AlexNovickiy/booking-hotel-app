@@ -1,12 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchMyBookings } from '@/lib/api/clientApi';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fetchMyBookings, deleteBooking } from '@/lib/api/clientApi';
+import { Booking } from '@/lib/types';
 import css from './MyBookings.module.css';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Image from 'next/image';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 export default function MyBookings() {
+  const queryClient = useQueryClient();
+
   const {
     data: bookings,
     isLoading,
@@ -15,6 +19,19 @@ export default function MyBookings() {
     queryKey: ['myBookings'],
     queryFn: fetchMyBookings,
     staleTime: 3 * 60 * 1000,
+  });
+
+  const { mutate: removeBooking, isPending: isDeleting } = useMutation({
+    mutationFn: deleteBooking,
+    onSuccess: (_, bookingId) => {
+      queryClient.setQueryData<Booking[]>(['myBookings'], prev =>
+        prev ? prev.filter(b => b._id !== bookingId) : []
+      );
+      toast.success('Бронювання видалено.');
+    },
+    onError: () => {
+      toast.error('Не вдалося видалити бронювання.');
+    },
   });
 
   if (isLoading) return <Loader />;
@@ -51,6 +68,15 @@ export default function MyBookings() {
             <div className={css.price}>
               Ціна: {b.hotel.price.toLocaleString()} грн / ніч
             </div>
+            {(b.status === 'completed' || b.status === 'cancelled') && (
+              <button
+                className={css.deleteButton}
+                onClick={() => removeBooking(b._id)}
+                disabled={isDeleting}
+              >
+                Видалити
+              </button>
+            )}
           </div>
         </div>
       ))}
@@ -58,7 +84,7 @@ export default function MyBookings() {
   );
 }
 
-function labelStatus(status: 'pending' | 'confirmed' | 'cancelled') {
+function labelStatus(status: 'pending' | 'confirmed' | 'cancelled' | 'completed') {
   switch (status) {
     case 'pending':
       return 'В обробці';
@@ -66,6 +92,8 @@ function labelStatus(status: 'pending' | 'confirmed' | 'cancelled') {
       return 'Підтверджено';
     case 'cancelled':
       return 'Скасовано';
+    case 'completed':
+      return 'Завершено';
     default:
       return status;
   }

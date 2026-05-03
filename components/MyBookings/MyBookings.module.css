@@ -73,6 +73,35 @@
   color: #f43f5e;
 }
 
+.status.completed {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.deleteButton {
+  margin-top: 0.5rem;
+  padding: 0.4em 1.1em;
+  border: none;
+  border-radius: 7px;
+  background: #faefef;
+  color: #f43f5e;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: fit-content;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: #f43f5e;
+  color: #fff;
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .specialReqs {
   font-size: 0.875rem;
   color: #1e40af;

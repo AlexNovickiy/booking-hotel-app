@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   analyzeReviewsWithGemini,
   postReview,
-  createBooking,
+  createCheckoutSession,
   deleteListing,
+  checkUserHotelBooking,
 } from '@/lib/api/clientApi';
 import { fetchHotelDetails } from '@/lib/api/clientApi';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -27,11 +28,13 @@ import Modal from '../Modal/Modal';
 type DetailPageClientProps = {
   hotelId: string;
   hotelData: Hotel;
+  canceled?: string;
 };
 
 export default function DetailPageClient({
   hotelId,
   hotelData,
+  canceled,
 }: DetailPageClientProps) {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
@@ -41,6 +44,12 @@ export default function DetailPageClient({
   const user = useAuthStore(state => state.user);
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (canceled === 'true') {
+      toast('Оплату скасовано. Ви можете спробувати знову.');
+    }
+  }, [canceled]);
 
   const {
     data: hotel,
@@ -81,19 +90,44 @@ export default function DetailPageClient({
     },
   });
 
-  const {
-    mutate: submitBooking,
-    isPending: isSubmittingBooking,
-    isSuccess: bookingCreated,
-  } = useMutation({
-    mutationFn: createBooking,
+  const isOwner = user?._id === hotelData.ownerId;
+
+  const { data: activeBookingData } = useQuery({
+    queryKey: ['activeBooking', hotelId],
+    queryFn: () => checkUserHotelBooking(hotelId),
+    enabled: isAuthenticated && !isOwner,
+    staleTime: 60 * 1000,
   });
+  const hasActiveBooking = activeBookingData?.hasActiveBooking ?? false;
+
+  const { mutate: startCheckout, isPending: isSubmittingBooking } = useMutation(
+    {
+      mutationFn: createCheckoutSession,
+      onSuccess: url => {
+        window.location.href = url;
+      },
+      onError: (error: unknown) => {
+        const err = error as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+        if (err.response?.status === 409) {
+          const msg = err.response.data?.message ?? '';
+          if (msg.includes('already have an active booking')) {
+            toast.error('Ви вже маєте активне бронювання цього готелю.');
+          } else if (msg.includes('already booked')) {
+            toast.error('Вибрані дати вже зайняті іншим гостем.');
+          } else {
+            toast.error('Конфлікт при бронюванні. Спробуйте ще раз.');
+          }
+        } else {
+          toast.error('Помилка при створенні сесії оплати. Спробуйте ще раз.');
+        }
+      },
+    }
+  );
 
   const handleBookingSubmit = (formData: BookingFormData) => {
-    submitBooking({
-      ...formData,
-      hotelId,
-    });
+    startCheckout({ ...formData, hotelId });
   };
 
   const handleAnalyzeReviews = () => {
@@ -121,7 +155,7 @@ export default function DetailPageClient({
       await deleteListing(hotelId);
       toast.success('Оголошення успішно видалено!');
       router.push('/profile');
-    } catch (error) {
+    } catch {
       toast.error('Помилка при видаленні оголошення.');
     } finally {
       setIsDeleteModalOpen(false);
@@ -175,11 +209,7 @@ export default function DetailPageClient({
             </span>
             / ніч
           </div>
-          {user?._id !== hotelData.ownerId ? (
-            <button className={css.bookButton} onClick={handleBookClick}>
-              Забронювати
-            </button>
-          ) : (
+          {isOwner ? (
             <div className={css.hostActions}>
               <Link
                 className={css.editListingLink}
@@ -194,6 +224,14 @@ export default function DetailPageClient({
                 Видалити
               </button>
             </div>
+          ) : hasActiveBooking ? (
+            <Link href="/profile" className={css.myBookingsLink}>
+              Мої бронювання
+            </Link>
+          ) : (
+            <button className={css.bookButton} onClick={handleBookClick}>
+              Забронювати
+            </button>
           )}
         </div>
       </div>
@@ -317,7 +355,6 @@ export default function DetailPageClient({
         onClose={() => setIsBookingModalOpen(false)}
         onSubmit={handleBookingSubmit}
         isSubmittingBooking={isSubmittingBooking}
-        bookingCreated={bookingCreated}
         maxGuests={hotel.maxGuests}
       />
 

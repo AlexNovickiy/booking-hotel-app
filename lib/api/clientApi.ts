@@ -20,6 +20,7 @@ import {
   Review,
   ResponseReview,
   BookingResponse,
+  ActiveBookingCheckResponse,
   RecommendationsResponse,
   RecommendedHotel,
 } from '@/lib/types';
@@ -210,6 +211,17 @@ export async function createBooking(newBooking: NewBooking): Promise<Booking> {
   return response.data.data;
 }
 
+export async function createCheckoutSession(
+  booking: NewBooking
+): Promise<string> {
+  const response = await nextClient.post<{
+    status: number;
+    message: string;
+    data: { url: string };
+  }>('/stripe/create-checkout-session', booking);
+  return response.data.data.url;
+}
+
 export async function fetchMyBookings(): Promise<Booking[]> {
   const response = await nextClient.get<BookingsResponse>(
     '/bookings/my-bookings'
@@ -225,8 +237,21 @@ export async function fetchHotelBookings(hotelId: string): Promise<Booking[]> {
   return response.data.data;
 }
 
+export async function checkUserHotelBooking(
+  hotelId: string
+): Promise<{ hasActiveBooking: boolean; booking: Booking | null }> {
+  const response = await nextClient.get<ActiveBookingCheckResponse>(
+    `/bookings/my-booking/${hotelId}`
+  );
+  return response.data.data;
+}
+
 export async function deleteListing(hotelId: string): Promise<void> {
   await nextClient.delete(`/hotels/${hotelId}`);
+}
+
+export async function deleteBooking(bookingId: string): Promise<void> {
+  await nextClient.delete(`/bookings/${bookingId}`);
 }
 
 export async function fetchRecommendations(

@@ -18,6 +18,7 @@ type BookingFormProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: BookingFormData) => void;
+  isSubmittingBooking: boolean;
 };
 
 export default function BookingForm({
@@ -29,11 +30,7 @@ export default function BookingForm({
   onClose,
   onSubmit,
   isSubmittingBooking,
-  bookingCreated,
-}: BookingFormProps & {
-  isSubmittingBooking: boolean;
-  bookingCreated: boolean;
-}) {
+}: BookingFormProps) {
   const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
   const [formData, setFormData] = useState<BookingFormData>({
@@ -49,23 +46,18 @@ export default function BookingForm({
   const [errors, setErrors] = useState<Partial<BookingFormData>>({});
   const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
   const [isLoadingBookings, setIsLoadingBookings] = useState(false);
-  const [bookingsError, setBookingsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
     document.body.style.overflow = 'hidden';
     setIsLoadingBookings(true);
-    setBookingsError(null);
     fetchHotelBookings(hotelId)
       .then(b => {
         if (!cancelled) setExistingBookings(b);
       })
       .catch(() => {
-        if (!cancelled) {
-          setBookingsError('Не вдалося завантажити зайняті дати');
-          toast.error('Не вдалося завантажити зайняті дати');
-        }
+        if (!cancelled) toast.error('Не вдалося завантажити зайняті дати');
       })
       .finally(() => {
         if (!cancelled) setIsLoadingBookings(false);
@@ -75,13 +67,6 @@ export default function BookingForm({
       document.body.style.overflow = 'auto';
     };
   }, [isOpen, hotelId]);
-
-  useEffect(() => {
-    if (bookingCreated) {
-      onClose();
-      toast.success('Бронювання успішно створено!');
-    }
-  }, [bookingCreated, onClose]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -169,20 +154,8 @@ export default function BookingForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
       onSubmit(formData);
-      // Reset form
-      setFormData({
-        checkIn: '',
-        checkOut: '',
-        guests: 1,
-        name: '',
-        email: '',
-        phone: '',
-        specialRequests: '',
-      });
-      onClose();
     }
   };
 
@@ -424,7 +397,7 @@ export default function BookingForm({
               className={css.submitButton}
               disabled={isSubmittingBooking}
             >
-              Підтвердити бронювання
+              {isSubmittingBooking ? 'Перенаправлення...' : 'Перейти до оплати'}
             </button>
           </div>
         </form>

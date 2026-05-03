@@ -10,6 +10,7 @@ import { Metadata } from 'next';
 
 type DetailPageProps = {
   params: Promise<{ hotelId: string }>;
+  searchParams: Promise<{ canceled?: string }>;
 };
 
 // SERVER COMPONENT: Metadata Generation (SEO)
@@ -38,8 +39,9 @@ export async function generateMetadata({
 }
 
 // SERVER COMPONENT: Data Prefetching
-export default async function DetailPage({ params }: DetailPageProps) {
+export default async function DetailPage({ params, searchParams }: DetailPageProps) {
   const { hotelId } = await params;
+  const { canceled } = await searchParams;
   const queryClient = new QueryClient();
 
   await prefetchHotelDetails(queryClient, hotelId);
@@ -47,7 +49,7 @@ export default async function DetailPage({ params }: DetailPageProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <DetailPageClient hotelId={hotelId} hotelData={hotel} />
+      <DetailPageClient hotelId={hotelId} hotelData={hotel} canceled={canceled} />
     </HydrationBoundary>
   );
 }
