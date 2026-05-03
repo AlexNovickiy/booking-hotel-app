@@ -1,54 +1,79 @@
 .wrapper {
-  background-color: #ffffff; /* Білий фон */
-  padding: 20px;
+  background-color: #ffffff;
+  padding: 16px;
   border-radius: 8px;
   text-align: center;
-  margin: 0 auto;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
-  color: #333333; /* Темно-сірий текст */
-  margin-bottom: 16px;
+  color: #333333;
+  margin-bottom: 12px;
 }
 
 .text {
-  font-size: 1rem;
-  color: #666666; /* Сірий текст */
-  margin-bottom: 24px;
+  font-size: 0.9375rem;
+  color: #666666;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
 .buttonsRow {
   display: flex;
-  justify-content: center; /* Центрування кнопок */
-  gap: 16px; /* Відступи між кнопками */
+  flex-direction: column;
+  gap: 10px;
+}
+
+.saveButton,
+.deleteButton {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
 }
 
 .saveButton {
-  background-color: #f0f0f0; /* Світло-сірий фон */
-  color: #333333; /* Темно-сірий текст */
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  background-color: #f0f0f0;
+  color: #333333;
 }
 
 .saveButton:hover {
-  background-color: #e0e0e0; /* Трохи темніший сірий при наведенні */
+  background-color: #e0e0e0;
 }
 
 .deleteButton {
-  background-color: #ff4d4f; /* Червоний фон */
-  color: #ffffff; /* Білий текст */
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  background-color: #ff4d4f;
+  color: #ffffff;
 }
 
 .deleteButton:hover {
-  background-color: #d9363e; /* Трохи темніший червоний при наведенні */
+  background-color: #d9363e;
+}
+
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .wrapper {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .buttonsRow {
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .saveButton,
+  .deleteButton {
+    width: auto;
+    min-width: 120px;
+  }
 }

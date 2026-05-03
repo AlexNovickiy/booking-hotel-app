@@ -16,8 +16,15 @@
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
+/* mobile: smaller image */
+.image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
 .content {
-  padding: 16px;
+  padding: 14px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -27,13 +34,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  max-width: 80%;
+  max-width: 78%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -43,27 +50,22 @@
 .rating {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #2563eb;
-  margin-left: 10px;
+  margin-left: 8px;
+  flex-shrink: 0;
 }
 
 .starIcon {
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
+  width: 14px;
+  height: 14px;
+  margin-right: 3px;
   color: #2563eb;
 }
 
-.image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-}
-
 .location {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -73,11 +75,11 @@
 
 .price {
   margin-top: auto;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .priceValue {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #1f2937;
 }
@@ -93,8 +95,43 @@
   text-align: center;
   text-decoration: none;
   transition: background-color 0.2s ease;
+  font-size: 14px;
 }
 
 .button:hover {
   background-color: #d97706;
+}
+
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .image {
+    height: 220px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 17px;
+  }
+}
+
+/* ── Desktop ── */
+@media (min-width: 1200px) {
+  .image {
+    height: 250px;
+  }
+
+  .content {
+    padding: 18px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .priceValue {
+    font-size: 24px;
+  }
 }

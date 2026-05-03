@@ -1,24 +1,24 @@
 .container {
   max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
+  margin: 1.5rem auto;
+  padding: 1.25rem;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .formGroup {
@@ -28,8 +28,8 @@
 
 .formGroup label {
   font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin-bottom: 6px;
+  font-size: 15px;
   color: #374151;
 }
 
@@ -38,16 +38,24 @@
   padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
   resize: vertical;
+  width: 100%;
 }
 
-/* Специфічний стиль для type="file" для кращого відображення */
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
 .imageUpload input[type='file'] {
   padding: 8px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   background-color: #f9fafb;
+  width: 100%;
 }
 
 .geminiBar {
@@ -55,9 +63,7 @@
 }
 
 .textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding-right: 120px;
+  padding-right: 110px;
 }
 
 .generateButton {
@@ -69,7 +75,7 @@
   padding: 6px 10px;
   border-radius: 6px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -89,12 +95,12 @@
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .submitButton:hover {
@@ -109,14 +115,14 @@
 .note {
   font-size: 12px;
   color: #6b7280;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .authMessage {
   text-align: center;
-  font-size: 20px;
+  font-size: 18px;
   color: #dc2626;
-  padding: 40px;
+  padding: 2.5rem;
 }
 
 .imageSection {
@@ -126,7 +132,7 @@
 }
 
 .imageWrapper {
-  margin-bottom: 24px;
+  margin-bottom: 1.25rem;
 }
 
 .coverPreview {
@@ -136,6 +142,7 @@
   background-color: #f2f2f2;
   object-position: center;
 }
+
 .uploadBtn {
   align-self: flex-start;
   padding: 8px 16px;
@@ -145,34 +152,51 @@
   color: white;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s;
 }
 
 .uploadBtn:hover {
   background-color: #1e40af;
 }
 
-@media screen and (min-width: 768px) {
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .container {
+    margin: 2rem auto;
+    padding: 1.75rem;
+  }
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
   .coverPreview {
-    width: 704px;
-    border-radius: 16px;
+    border-radius: 12px;
+  }
+
+  .formGroup label {
+    font-size: 16px;
   }
 }
 
-@media (min-width: 1440px) {
-  .imageSection {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+/* ── Desktop ── */
+@media (min-width: 1200px) {
+  .container {
+    margin: 2.5rem auto;
+    padding: 2rem;
   }
 
-  .imageWrapper {
-    width: 100%;
-    max-width: 865px;
+  .title {
+    font-size: 32px;
   }
 
   .coverPreview {
-    width: 865px;
-    max-width: 865px;
+    border-radius: 16px;
+  }
+
+  .submitButton {
+    font-size: 18px;
+    margin-top: 10px;
   }
 }

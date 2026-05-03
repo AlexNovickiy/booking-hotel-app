@@ -29,7 +29,7 @@ import { useAuthStore } from '@/lib/store/authStore';
 import { GoogleGenAI } from '@google/genai';
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY, // Используем клиентскую переменную
+  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY, // Використовуємо клієнтську змінну
 });
 
 // Функція для отримання заголовків авторизації
@@ -229,10 +229,15 @@ export async function deleteListing(hotelId: string): Promise<void> {
   await nextClient.delete(`/hotels/${hotelId}`);
 }
 
-export async function fetchRecommendations(topN: number = 5): Promise<RecommendedHotel[]> {
-  const response = await nextClient.get<RecommendationsResponse>('/recommendations', {
-    params: { topN },
-  });
+export async function fetchRecommendations(
+  topN: number = 5
+): Promise<RecommendedHotel[]> {
+  const response = await nextClient.get<RecommendationsResponse>(
+    '/recommendations',
+    {
+      params: { topN },
+    }
+  );
   return response.data.data;
 }
 

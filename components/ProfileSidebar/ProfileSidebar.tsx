@@ -33,12 +33,12 @@ export default function Sidebar({
           height={60}
           className={css.avatar}
         />
-        <div>
+        <div className={css.sidebarText}>
           <h2 className={css.userName}>{user.name}</h2>
           <p className={css.userEmail}>{user.email}</p>
         </div>
       </div>
-      <nav>
+      <nav className={css.navList}>
         <button
           onClick={() => setActiveSection('my-listings')}
           className={getLinkClass('my-listings')}

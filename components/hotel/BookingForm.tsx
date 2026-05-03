@@ -103,7 +103,7 @@ export default function BookingForm({
     }
   };
 
-  // Формируем список заблокированных дат на основе existingBookings
+  // Створюємо список заблокованих дат на основі existingBookings
   const getDisabledDates = () => {
     const disabled: Date[] = [];
     existingBookings.forEach(booking => {

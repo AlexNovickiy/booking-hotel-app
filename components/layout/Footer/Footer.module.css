@@ -4,18 +4,40 @@
     rgb(31, 41, 55),
     rgb(22, 55, 100)
   );
-  color: #d1d5db; /* text-gray-400 */
-  padding: 18px 0;
-  margin-top: auto; /* Push to bottom */
+  color: #d1d5db;
+  padding: 16px 0;
+  margin-top: auto;
 }
 
 .footerContent {
   max-width: 1440px;
   margin: 0 auto;
+  padding: 0 16px;
   text-align: center;
-  font-size: 0.875rem; /* text-sm */
+  font-size: 0.8125rem;
 }
 
 .footerContent p {
-  margin: 0.25rem 0;
+  margin: 0.2rem 0;
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 20px 0;
+  }
+
+  .footerContent {
+    font-size: 0.875rem;
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .footer {
+    padding: 22px 0;
+  }
+
+  .footerContent {
+    padding: 0 32px;
+  }
 }

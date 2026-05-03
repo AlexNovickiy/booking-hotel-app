@@ -8,7 +8,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .headerContent {
@@ -21,32 +21,81 @@
 }
 
 .headerTitle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  cursor: pointer;
   text-decoration: none;
   color: white;
+  white-space: nowrap;
 }
 
-.navigation {
+/* ── Hamburger (mobile only) ── */
+.burger {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 26px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.burgerLine {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.burgerOpen .burgerLine:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.burgerOpen .burgerLine:nth-child(2) {
+  opacity: 0;
+}
+.burgerOpen .burgerLine:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ── Navigation ── */
+.navigation {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(
+    to bottom,
+    rgb(42, 91, 139),
+    rgb(30, 64, 100)
+  );
+  padding: 12px 16px 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.navigationOpen {
+  display: flex;
 }
 
 .navLink {
   text-decoration: none;
   color: #ffffff;
-  padding: 6px 12px;
+  padding: 10px 14px;
   border-radius: 6px;
   transition: background-color 0.2s;
-  font-size: 16px;
+  font-size: 15px;
   display: flex;
   align-items: center;
 }
 
 .navLinkActive {
-  background-color: #1e40af; /* темніший синій для активного */
+  background-color: #1e40af;
 }
 
 .navLink:hover {
@@ -56,14 +105,15 @@
 .icon {
   width: 16px;
   height: 16px;
-  margin-right: 5px;
+  margin-right: 6px;
+  flex-shrink: 0;
 }
 
 .navButtonProfile {
-  background-color: #f59e0b; /* amber-500 */
+  background-color: #f59e0b;
   color: white;
-  padding: 8px 14px;
-  border-radius: 9999px;
+  padding: 10px 14px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
   border: none;
@@ -73,6 +123,7 @@
   display: flex;
   align-items: center;
 }
+
 .navButtonProfile:hover {
   background-color: #d97706;
 }
@@ -81,8 +132,8 @@
 .navButtonRegister {
   background-color: #ffffff;
   color: #1f2937;
-  padding: 8px 14px;
-  border-radius: 9999px;
+  padding: 10px 14px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
   border: none;
@@ -90,20 +141,91 @@
   transition: background-color 0.3s;
   text-decoration: none;
   display: inline-block;
+  text-align: center;
+}
+
+.navButtonLogin:hover,
+.navButtonRegister:hover {
+  background-color: #e5e7eb;
 }
 
 .navButtonLogout {
-  background-color: #ef4444; /* red-500 */
+  background-color: #ef4444;
   color: white;
-  padding: 8px 14px;
-  border-radius: 9999px;
+  padding: 10px 14px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
+  text-align: center;
 }
 
 .navButtonLogout:hover {
   background-color: #dc2626;
+}
+
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .headerTitle {
+    font-size: 22px;
+  }
+
+  .burger {
+    display: none;
+  }
+
+  .navigation {
+    display: flex !important;
+    flex-direction: row;
+    position: static;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .navLink {
+    font-size: 14px;
+    padding: 7px 10px;
+  }
+
+  .navButtonProfile,
+  .navButtonLogin,
+  .navButtonRegister,
+  .navButtonLogout {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 9999px;
+  }
+}
+
+/* ── Desktop ── */
+@media (min-width: 1200px) {
+  .headerContent {
+    padding: 14px 32px;
+  }
+
+  .headerTitle {
+    font-size: 24px;
+  }
+
+  .navigation {
+    gap: 10px;
+  }
+
+  .navLink {
+    font-size: 16px;
+    padding: 7px 12px;
+  }
+
+  .navButtonProfile,
+  .navButtonLogin,
+  .navButtonRegister,
+  .navButtonLogout {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 }

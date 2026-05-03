@@ -53,7 +53,7 @@ export const Classification = () => {
       <div className={css.hotelsWrap}>
         {hotels.map(hotel => (
           <div className={css.hotelCard} key={hotel.id}>
-            <div className={getColorClass(hotel.score)}>{hotel.score}</div>
+            <div className={`${css.scoreBadge} ${getColorClass(hotel.score)}`}>{hotel.score}</div>
             <div>
               <div className={css.hotelName}>{hotel.title}</div>
               <div className={css.hotelScore}>

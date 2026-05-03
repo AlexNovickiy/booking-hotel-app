@@ -1,23 +1,54 @@
 .profileLayout {
   max-width: 1200px;
-  margin: 32px auto;
+  margin: 1.25rem auto;
 }
 
+/* mobile: single column */
 .profileGrid {
   display: grid;
-  gap: 32px;
-}
-
-@media (min-width: 768px) {
-  .profileGrid {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
 }
 
 .profileContent {
   background-color: #ffffff;
-  padding: 24px;
+  padding: 1.25rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  min-height: 400px;
+  min-height: 300px;
+  min-width: 0;
+}
+
+/* ── Tablet: sidebar left, content right ── */
+@media (min-width: 768px) {
+  .profileLayout {
+    margin: 1.75rem auto;
+  }
+
+  .profileGrid {
+    grid-template-columns: 240px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .profileContent {
+    padding: 1.5rem;
+    min-height: 400px;
+  }
+}
+
+/* ── Desktop ── */
+@media (min-width: 1200px) {
+  .profileLayout {
+    margin: 2rem auto;
+  }
+
+  .profileGrid {
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+  }
+
+  .profileContent {
+    padding: 2rem;
+  }
 }

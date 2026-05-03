@@ -2,13 +2,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.875rem;
   border-bottom: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .header h2 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: #1f2937;
   margin: 0;
@@ -20,24 +22,27 @@
   padding: 8px 16px;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 14px;
   text-decoration: none;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .addButton:hover {
   background-color: #1e40af;
 }
 
+/* mobile: 1 col */
 .listingsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .noListings {
   text-align: center;
-  padding: 40px;
-  font-size: 18px;
+  padding: 2.5rem;
+  font-size: 16px;
   color: #6b7280;
   background-color: #f9fafb;
   border-radius: 12px;
@@ -53,4 +58,28 @@
 
 .createLink:hover {
   text-decoration: underline;
+}
+
+/* ── Tablet: 2 cols ── */
+@media (min-width: 768px) {
+  .header h2 {
+    font-size: 22px;
+  }
+
+  .listingsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* ── Desktop: 3 cols ── */
+@media (min-width: 1200px) {
+  .header h2 {
+    font-size: 24px;
+  }
+
+  .listingsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
 }

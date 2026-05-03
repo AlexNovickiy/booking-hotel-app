@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import css from './Header.module.css';
@@ -10,33 +11,61 @@ export default function Header() {
   const { isAuthenticated, user, clearAuth } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logoutUser();
     clearAuth();
+    setMenuOpen(false);
     router.push('/');
   };
 
   const isActive = (path: string) =>
     pathname === path ? css.navLinkActive : '';
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header className={css.header}>
       <div className={css.headerContent}>
-        <Link href="/" className={css.headerTitle}>
+        <Link href="/" className={css.headerTitle} onClick={closeMenu}>
           HotelBooking
         </Link>
-        <nav className={css.navigation}>
-          <Link href="/" className={`${css.navLink} ${isActive('/')}`}>
+
+        <button
+          className={`${css.burger} ${menuOpen ? css.burgerOpen : ''}`}
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Меню"
+          aria-expanded={menuOpen}
+        >
+          <span className={css.burgerLine} />
+          <span className={css.burgerLine} />
+          <span className={css.burgerLine} />
+        </button>
+
+        <nav className={`${css.navigation} ${menuOpen ? css.navigationOpen : ''}`}>
+          <Link
+            href="/"
+            className={`${css.navLink} ${isActive('/')}`}
+            onClick={closeMenu}
+          >
             Головна
           </Link>
 
           {isAuthenticated ? (
             <>
-              <Link href="/host/add-listing" className={css.navLink}>
+              <Link
+                href="/host/add-listing"
+                className={css.navLink}
+                onClick={closeMenu}
+              >
                 <Icon name="plus" className={css.icon} /> Здати житло
               </Link>
-              <Link href="/profile" className={css.navButtonProfile}>
+              <Link
+                href="/profile"
+                className={css.navButtonProfile}
+                onClick={closeMenu}
+              >
                 <Icon name="user" className={css.icon} />{' '}
                 {user?.name || 'Профіль'}
               </Link>
@@ -46,10 +75,10 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/login" className={css.navButtonLogin}>
+              <Link href="/login" className={css.navButtonLogin} onClick={closeMenu}>
                 Вхід
               </Link>
-              <Link href="/register" className={css.navButtonRegister}>
+              <Link href="/register" className={css.navButtonRegister} onClick={closeMenu}>
                 Реєстрація
               </Link>
             </>
