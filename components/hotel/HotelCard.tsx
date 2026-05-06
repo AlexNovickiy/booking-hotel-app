@@ -3,6 +3,7 @@ import Image from 'next/image';
 import css from './HotelCard.module.css';
 import Icon from '../ui/Icon';
 import Link from 'next/link';
+import FavoriteButton from '@/components/FavoriteButton/FavoriteButton';
 
 type HotelCardProps = {
   hotel: Hotel;
@@ -14,14 +15,17 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
   return (
     <div className={css.card}>
-      <Image
-        src={hotel.imageUrl}
-        alt={hotel.title}
-        width={400}
-        height={250}
-        className={css.image}
-        priority
-      />
+      <div className={css.imageWrapper}>
+        <Image
+          src={hotel.imageUrl}
+          alt={hotel.title}
+          width={400}
+          height={250}
+          className={css.image}
+          priority
+        />
+        <FavoriteButton hotelId={hotel._id} className={css.favoriteBtn} />
+      </div>
       <div className={css.content}>
         <div className={css.header}>
           <h3 className={css.title}>{hotel.title}</h3>

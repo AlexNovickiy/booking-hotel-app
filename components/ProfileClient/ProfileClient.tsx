@@ -10,11 +10,13 @@ import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import Classification from '@/components/Classification/Classification';
 import MyBookings from '@/components/MyBookings/MyBookings';
+import FavoritesTab from '@/components/FavoritesTab/FavoritesTab';
 import { useProfileTabStore } from '@/lib/store/profileTabStore';
 
 type ProfileSection =
   | 'my-listings'
   | 'bookings'
+  | 'favorites'
   | 'settings'
   | 'classification';
 
@@ -47,6 +49,8 @@ export default function ProfileClient() {
         return <MyListings />;
       case 'bookings':
         return <MyBookings />;
+      case 'favorites':
+        return <FavoritesTab />;
       case 'settings':
         return <div>Налаштування (в розробці)</div>;
       case 'classification':

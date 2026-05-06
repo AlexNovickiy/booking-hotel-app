@@ -1,0 +1,33 @@
+.button {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.button:hover {
+  background: #fff;
+  transform: scale(1.12);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+  transition: color 0.15s;
+}
+
+.active {
+  color: #2563eb;
+}

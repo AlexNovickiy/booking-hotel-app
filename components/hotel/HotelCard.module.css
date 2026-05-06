@@ -17,10 +17,22 @@
 }
 
 /* mobile: smaller image */
+.imageWrapper {
+  position: relative;
+}
+
 .image {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  display: block;
+}
+
+.favoriteBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .content {

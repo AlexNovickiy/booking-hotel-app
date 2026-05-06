@@ -95,10 +95,16 @@
   background-color: #fff;
 }
 
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
 .price {
   font-size: 1.1rem;
   color: #374151;
-  margin-bottom: 1.25rem;
 }
 
 .priceValue {

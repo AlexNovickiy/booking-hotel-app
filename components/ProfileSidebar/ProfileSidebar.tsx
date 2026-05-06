@@ -5,8 +5,9 @@ import type { User } from '@/lib/types';
 type ProfileSection =
   | 'my-listings'
   | 'bookings'
+  | 'favorites'
   | 'settings'
-  | 'classification'; // Add new section
+  | 'classification';
 
 type SidebarProps = {
   user: User;
@@ -52,7 +53,13 @@ export default function Sidebar({
           Мої бронювання
         </button>
         <button
-          onClick={() => setActiveSection('classification')} // Add new button
+          onClick={() => setActiveSection('favorites')}
+          className={getLinkClass('favorites')}
+        >
+          Улюблені
+        </button>
+        <button
+          onClick={() => setActiveSection('classification')}
           className={getLinkClass('classification')}
         >
           Аналіз відгуків

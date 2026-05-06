@@ -14,6 +14,7 @@ import Image from 'next/image';
 import Loader from '@/components/Loader/Loader';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 import BookingForm from './BookingForm';
+import FavoriteButton from '@/components/FavoriteButton/FavoriteButton';
 import ReviewForm from './ReviewForm';
 import ConfirmDeleteContent from '@/components/ConfirmDeleteContent/ConfirmDeleteContent';
 import { BookingFormData, Hotel, NewReview } from '@/lib/types';
@@ -203,11 +204,14 @@ export default function DetailPageClient({
           <p>{hotel.description}</p>
         </div>
         <div className={css.bookingBox}>
-          <div className={css.price}>
-            <span className={css.priceValue}>
-              {hotel.price.toLocaleString()} грн
-            </span>
-            / ніч
+          <div className={css.priceRow}>
+            <div className={css.price}>
+              <span className={css.priceValue}>
+                {hotel.price.toLocaleString()} грн
+              </span>
+              / ніч
+            </div>
+            <FavoriteButton hotelId={hotelId} />
           </div>
           {isOwner ? (
             <div className={css.hostActions}>
