@@ -1,9 +1,19 @@
+'use client';
+
 import type { Hotel } from '@/lib/types';
 import Image from 'next/image';
 import css from './HotelCard.module.css';
 import Icon from '../ui/Icon';
 import Link from 'next/link';
 import FavoriteButton from '@/components/FavoriteButton/FavoriteButton';
+import { useState } from 'react';
+
+const FALLBACK = '/images/placeholder-image.png';
+
+function resolveImage(url: string): string {
+  if (!url || url.includes('placehold.co')) return FALLBACK;
+  return url;
+}
 
 type HotelCardProps = {
   hotel: Hotel;
@@ -12,17 +22,19 @@ type HotelCardProps = {
 export default function HotelCard({ hotel }: HotelCardProps) {
   const detailUrl = `/${hotel._id}`;
   const rating = hotel.ratings_summary.average_rating.toFixed(1);
+  const [imgSrc, setImgSrc] = useState(() => resolveImage(hotel.imageUrl));
 
   return (
     <div className={css.card}>
       <div className={css.imageWrapper}>
         <Image
-          src={hotel.imageUrl}
+          src={imgSrc}
           alt={hotel.title}
           width={400}
           height={250}
           className={css.image}
           priority
+          onError={() => setImgSrc(FALLBACK)}
         />
         <FavoriteButton hotelId={hotel._id} className={css.favoriteBtn} />
       </div>

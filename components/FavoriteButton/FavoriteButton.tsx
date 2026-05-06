@@ -9,7 +9,7 @@ type FavoriteButtonProps = {
 };
 
 export default function FavoriteButton({ hotelId, className }: FavoriteButtonProps) {
-  const isFavorite = useFavoritesStore(state => state.isFavorite(hotelId));
+  const isFavorite = useFavoritesStore(state => state.favoriteIds.includes(hotelId));
   const toggleFavorite = useFavoritesStore(state => state.toggleFavorite);
 
   return (

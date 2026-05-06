@@ -189,12 +189,13 @@ export default function DetailPageClient({
 
       <div className={css.gallery}>
         <Image
-          src={hotel.imageUrl}
+          src={hotel.imageUrl?.includes('placehold.co') ? '/images/placeholder-image.png' : hotel.imageUrl}
           alt={hotel.title}
           width={1200}
           height={600}
           className={css.mainImage}
           priority
+          onError={e => { (e.target as HTMLImageElement).src = '/images/placeholder-image.png'; }}
         />
       </div>
 

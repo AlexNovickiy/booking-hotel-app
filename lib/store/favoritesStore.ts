@@ -4,12 +4,11 @@ import { persist } from 'zustand/middleware';
 type FavoritesStore = {
   favoriteIds: string[];
   toggleFavorite: (hotelId: string) => void;
-  isFavorite: (hotelId: string) => boolean;
 };
 
 export const useFavoritesStore = create<FavoritesStore>()(
   persist(
-    (set, get) => ({
+    set => ({
       favoriteIds: [],
       toggleFavorite: hotelId =>
         set(state => ({
@@ -17,8 +16,10 @@ export const useFavoritesStore = create<FavoritesStore>()(
             ? state.favoriteIds.filter(id => id !== hotelId)
             : [...state.favoriteIds, hotelId],
         })),
-      isFavorite: hotelId => get().favoriteIds.includes(hotelId),
     }),
-    { name: 'favorites-store' }
+    {
+      name: 'favorites-store',
+      partialize: state => ({ favoriteIds: state.favoriteIds }),
+    }
   )
 );
