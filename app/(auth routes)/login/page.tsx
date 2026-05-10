@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { getMe, loginUser } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 import LoginGoogleBtn from '@/components/LoginGoogleBtn/LoginGoogleBtn';
+import Link from 'next/link';
 export default function SignInPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
@@ -77,6 +78,12 @@ export default function SignInPage() {
 
         {isError && <p className={css.error}>{isError}</p>}
       </form>
+      <p className={css.switchAuth}>
+        Ще не маєте облікового запису?{' '}
+        <Link href="/register" className={css.switchLink}>
+          Зареєструватися
+        </Link>
+      </p>
     </div>
   );
 }

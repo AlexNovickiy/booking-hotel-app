@@ -5,6 +5,7 @@ import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { registerUser } from '@/lib/api/clientApi';
 import LoginGoogleBtn from '@/components/LoginGoogleBtn/LoginGoogleBtn';
+import Link from 'next/link';
 export default function SignUpPage() {
   const router = useRouter();
   const [isError, setIsError] = useState('');
@@ -69,6 +70,12 @@ export default function SignUpPage() {
 
         {isError && <p className={css.error}>{isError}</p>}
       </form>
+      <p className={css.switchAuth}>
+        Вже маєте обліковий запис?{' '}
+        <Link href="/login" className={css.switchLink}>
+          Увійти
+        </Link>
+      </p>
     </div>
   );
 }
