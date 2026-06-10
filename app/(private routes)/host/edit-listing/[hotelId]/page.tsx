@@ -6,7 +6,7 @@ import {
 import { prefetchHotelDetails } from '@/lib/api/serverApi';
 import { fetchHotelDetails } from '@/lib/api/serverApi';
 import { Metadata } from 'next';
-import AddListingPage from '../../add-listing/page';
+import ListingForm from '@/components/ListingForm/ListingForm';
 
 type CreatingListingPageProps = {
   params: Promise<{ hotelId: string }>;
@@ -49,7 +49,7 @@ export default async function CreatingListingPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <AddListingPage listing={hotel} />
+      <ListingForm listing={hotel} />
     </HydrationBoundary>
   );
 }
