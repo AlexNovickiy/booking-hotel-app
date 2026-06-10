@@ -6,6 +6,7 @@ import css from './Header.module.css';
 import { useAuthStore } from '@/lib/store/authStore';
 import Icon from '@/components/ui/Icon';
 import { logoutUser } from '@/lib/api/clientApi';
+import { clearAuthCookie } from '@/lib/authCookie';
 
 export default function Header() {
   const { isAuthenticated, user, clearAuth } = useAuthStore();
@@ -16,6 +17,7 @@ export default function Header() {
   const handleLogout = async () => {
     await logoutUser();
     clearAuth();
+    clearAuthCookie();
     setMenuOpen(false);
     router.push('/');
   };

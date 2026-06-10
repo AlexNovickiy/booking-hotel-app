@@ -5,6 +5,7 @@ import { NewUser } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { getMe, loginUser } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
+import { setAuthCookie } from '@/lib/authCookie';
 import LoginGoogleBtn from '@/components/LoginGoogleBtn/LoginGoogleBtn';
 import Link from 'next/link';
 export default function SignInPage() {
@@ -20,8 +21,8 @@ export default function SignInPage() {
       const session = await loginUser(credentials);
 
       if (session?.data?.accessToken) {
-        // Зберігаємо токен в store
         setToken(session.data.accessToken);
+        setAuthCookie(session.data.accessToken);
 
         // Отримуємо дані користувача
         const user = await getMe();

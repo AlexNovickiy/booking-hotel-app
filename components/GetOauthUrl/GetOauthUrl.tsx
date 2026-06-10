@@ -2,6 +2,7 @@
 
 import { loginWithGoogle } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
+import { setAuthCookie } from '@/lib/authCookie';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import css from './GetOauthUrl.module.css';
@@ -23,7 +24,10 @@ export default function GetOauthUrl() {
     const sendCodeToBackend = async () => {
       try {
         const { data } = await loginWithGoogle({ code });
-        if (data?.data?.accessToken) setToken(data.data.accessToken);
+        if (data?.data?.accessToken) {
+          setToken(data.data.accessToken);
+          setAuthCookie(data.data.accessToken);
+        }
         setUser(data.data.user);
         router.push('/');
       } catch (error) {

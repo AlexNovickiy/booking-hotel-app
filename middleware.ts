@@ -5,12 +5,11 @@ const privatePaths = ['/profile', '/host'];
 
 export async function middleware(req: NextRequest, res: NextResponse) {
   const { pathname } = req.nextUrl;
-  const refreshToken = req.cookies.get('refreshToken')?.value;
-  const sessionId = req.cookies.get('sessionId')?.value;
+  const authToken = req.cookies.get('authToken')?.value;
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
   const isPrivatePath = privatePaths.some(path => pathname.startsWith(path));
 
-  const isAuthenticated = !!(refreshToken || sessionId);
+  const isAuthenticated = !!authToken;
 
   // Если пользователь авторизован и пытается зайти на публичные страницы
   if (isAuthenticated && isPublicPath) {
