@@ -9,7 +9,8 @@ import SearchBarClient from '@/components/hotel/SearchBar.client';
 import RecommendedHotels from '@/components/hotel/RecommendedHotels.client';
 import css from '@/app/Home.module.css';
 
-// Server Component
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const queryClient = new QueryClient();
   const initialData = await fetchHotels('', 1);
