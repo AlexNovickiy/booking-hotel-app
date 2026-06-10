@@ -266,13 +266,12 @@
 }
 
 @keyframes spin {
-  0%   { transform: rotate(0); }
-  100% { transform: rotate(360deg); }
-}
-
-:disabled {
-  opacity: 0.65;
-  pointer-events: none;
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* react-datepicker */

@@ -10,7 +10,6 @@ import {
   ClassificationAll,
   NewBooking,
   Booking,
-  User,
   UserResponse,
   BookingsResponse,
   OwnListingsResponse,
@@ -25,7 +24,6 @@ import {
   RecommendedHotel,
 } from '@/lib/types';
 import { nextClient } from './api';
-import axios from 'axios';
 import { useAuthStore } from '@/lib/store/authStore';
 import { GoogleGenAI } from '@google/genai';
 
